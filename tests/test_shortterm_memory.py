@@ -18,7 +18,7 @@ from smrti.tiers.shortterm import (
     PromotionCandidate
 )
 from smrti.adapters.storage.redis import RedisAdapter
-from smrti.adapters.storage.memory_adapter import MemoryAdapter
+from smrti.adapters.storage.memory_adapter import MemoryStorageAdapter
 from smrti.models.memory import MemoryItem, MemoryMetadata, AccessPattern
 
 
@@ -28,7 +28,7 @@ class TestShortTermMemory:
     @pytest.fixture
     async def memory_adapter(self):
         """Create memory adapter for testing."""
-        adapter = MemoryAdapter(tenant_id="test")
+        adapter = MemoryStorageAdapter(tenant_id="test")
         yield adapter
         await adapter.cleanup()
     
@@ -347,7 +347,7 @@ class TestShortTermMemoryPerformance:
     @pytest.fixture
     async def performance_stm(self):
         """Create STM instance for performance testing."""
-        adapter = MemoryAdapter(tenant_id="perf_test")
+        adapter = MemoryStorageAdapter(tenant_id="perf_test")
         stm = ShortTermMemory(memory_adapter=adapter, tenant_id="perf_test")
         await stm.start()
         yield stm

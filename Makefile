@@ -112,6 +112,14 @@ docker-dev: ## Start full development environment with tools
 docker-down: ## Stop development services
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
 
+docker-ps: ## Show running containers status
+	@echo "Smrti Container Status"
+	@echo "====================="
+	@docker ps --filter "name=smrti-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" || docker ps
+	@echo ""
+	@echo "💡 Use 'docker logs <container-name>' to view logs"
+	@echo "💡 Use 'make docker-logs' to follow all service logs"
+
 docker-logs: ## Show development service logs
 	docker-compose logs -f
 

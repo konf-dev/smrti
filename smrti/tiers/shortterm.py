@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from ..adapters.storage.redis import RedisAdapter
-from ..adapters.storage.memory_adapter import MemoryAdapter
+from ..adapters.storage.memory_adapter import MemoryStorageAdapter
 from ..models.memory import MemoryItem, MemoryMetadata, AccessPattern
 
 
@@ -64,12 +64,12 @@ class ShortTermMemory:
     def __init__(
         self,
         redis_adapter: Optional[RedisAdapter] = None,
-        memory_adapter: Optional[MemoryAdapter] = None,
+        memory_adapter: Optional[MemoryStorageAdapter] = None,
         config: Optional[ConsolidationConfig] = None,
         tenant_id: str = "default"
     ):
         self.redis = redis_adapter
-        self.memory = memory_adapter or MemoryAdapter(tenant_id=tenant_id)
+        self.memory = memory_adapter or MemoryStorageAdapter(tenant_id=tenant_id)
         self.config = config or ConsolidationConfig()
         self.tenant_id = tenant_id
         
