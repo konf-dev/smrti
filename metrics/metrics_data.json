@@ -1,0 +1,1505 @@
+{
+  "metrics": [
+    {
+      "name": "memory_hit_rate",
+      "value": 1.0,
+      "timestamp": 1759488283.0533214,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 0.9760650503423982,
+      "timestamp": 1759488285.0557406,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 1.0,
+      "timestamp": 1759488287.0580447,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 0.9556439407751607,
+      "timestamp": 1759488289.0602038,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 0.7208409726816555,
+      "timestamp": 1759488291.0621789,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 0.9546794816581577,
+      "timestamp": 1759488293.0645025,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 0.9440101946087289,
+      "timestamp": 1759488295.0667703,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 1.0,
+      "timestamp": 1759488297.0691066,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 0.9059265295099376,
+      "timestamp": 1759488299.0712004,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 0.9615433837522611,
+      "timestamp": 1759488301.0735414,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 0.8629908920152669,
+      "timestamp": 1759488303.0758717,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 1.0,
+      "timestamp": 1759488305.0781767,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 1.0,
+      "timestamp": 1759488307.08048,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 1.0,
+      "timestamp": 1759488309.0827646,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_hit_rate",
+      "value": 1.0,
+      "timestamp": 1759488311.0850592,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 70.57430811529262,
+      "timestamp": 1759488283.053364,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 94.16243592684326,
+      "timestamp": 1759488285.0557535,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 37.400670982984906,
+      "timestamp": 1759488287.058053,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 46.128469890116186,
+      "timestamp": 1759488289.0602152,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 39.69222835067909,
+      "timestamp": 1759488291.0621932,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 52.4473028097558,
+      "timestamp": 1759488293.064515,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 45.19612862647923,
+      "timestamp": 1759488295.0667825,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 52.89122457580097,
+      "timestamp": 1759488297.0691237,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 54.269969746244314,
+      "timestamp": 1759488299.071217,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 64.67312761167625,
+      "timestamp": 1759488301.0735583,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 16.827832999174817,
+      "timestamp": 1759488303.0758877,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 40.83755958610422,
+      "timestamp": 1759488305.0781903,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 77.4077264796682,
+      "timestamp": 1759488307.080493,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 64.26630907562942,
+      "timestamp": 1759488309.0827773,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_response_time",
+      "value": 49.20215642704648,
+      "timestamp": 1759488311.085072,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1126.4953908575062,
+      "timestamp": 1759488283.053382,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1010.467530422071,
+      "timestamp": 1759488285.0557578,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1533.1930773113854,
+      "timestamp": 1759488287.0580554,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1632.4855073875503,
+      "timestamp": 1759488289.060219,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 994.2446476787379,
+      "timestamp": 1759488291.0622098,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1161.136870292035,
+      "timestamp": 1759488293.064519,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 873.0811060682049,
+      "timestamp": 1759488295.066786,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1434.4181835783713,
+      "timestamp": 1759488297.0691297,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1273.3581430746108,
+      "timestamp": 1759488299.0712233,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 963.3543959080763,
+      "timestamp": 1759488301.0735638,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1181.683337847507,
+      "timestamp": 1759488303.0758939,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1091.5535414633155,
+      "timestamp": 1759488305.0781946,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1067.8832787770111,
+      "timestamp": 1759488307.0804965,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1155.7326657460237,
+      "timestamp": 1759488309.082781,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_throughput",
+      "value": 1127.9124765159952,
+      "timestamp": 1759488311.0850759,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 32.179460830888445,
+      "timestamp": 1759488283.0533931,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 33.11167025288789,
+      "timestamp": 1759488285.0557618,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 55.63147503700226,
+      "timestamp": 1759488287.0580573,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 0,
+      "timestamp": 1759488289.060238,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 45.25095461124908,
+      "timestamp": 1759488291.0622144,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 35.15295117356632,
+      "timestamp": 1759488293.0645223,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 28.236436193152315,
+      "timestamp": 1759488295.0667894,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 45.638098295178104,
+      "timestamp": 1759488297.0691357,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 59.0717780623808,
+      "timestamp": 1759488299.0712292,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 30.85588623369792,
+      "timestamp": 1759488301.07357,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 27.24382099629015,
+      "timestamp": 1759488303.0758996,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 34.45461368399454,
+      "timestamp": 1759488305.0781991,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 39.933843010488495,
+      "timestamp": 1759488307.0805,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 48.78815550820201,
+      "timestamp": 1759488309.0827847,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "cpu_usage",
+      "value": 25.188243705081728,
+      "timestamp": 1759488311.0850797,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 599.7854914043729,
+      "timestamp": 1759488283.0534236,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 632.0282703460628,
+      "timestamp": 1759488285.0557668,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 602.7386090706149,
+      "timestamp": 1759488287.0580595,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 578.376018831242,
+      "timestamp": 1759488289.0602412,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 514.1254763988721,
+      "timestamp": 1759488291.0622199,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 525.1528100757635,
+      "timestamp": 1759488293.0645263,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 643.6496995770975,
+      "timestamp": 1759488295.0667942,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 641.2016280823221,
+      "timestamp": 1759488297.069142,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 612.1385454193424,
+      "timestamp": 1759488299.0712364,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 612.205167699789,
+      "timestamp": 1759488301.073577,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 650.4630391747258,
+      "timestamp": 1759488303.0759065,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 502.5234579528042,
+      "timestamp": 1759488305.0782034,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 598.0505808785966,
+      "timestamp": 1759488307.0805042,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 546.3394672673232,
+      "timestamp": 1759488309.0827901,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "memory_usage",
+      "value": 527.8490680985078,
+      "timestamp": 1759488311.0850835,
+      "type": "gauge",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 71.81349972319418,
+      "timestamp": 1759488283.0534346,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 62.84702587401599,
+      "timestamp": 1759488285.0557709,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 66.70959307659561,
+      "timestamp": 1759488287.0580616,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 67.71594574863511,
+      "timestamp": 1759488289.060244,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 58.24635163260355,
+      "timestamp": 1759488291.0622241,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 49.03316111127551,
+      "timestamp": 1759488293.06453,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 60.09813393064723,
+      "timestamp": 1759488295.0667975,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 32.37028585099966,
+      "timestamp": 1759488297.0691476,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 55.954299729552915,
+      "timestamp": 1759488299.0712423,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 21.906085879824296,
+      "timestamp": 1759488301.073583,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 19.080484235633104,
+      "timestamp": 1759488303.075912,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 44.479189981957184,
+      "timestamp": 1759488305.0782073,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 44.31174670238197,
+      "timestamp": 1759488307.0805073,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 36.766700517108575,
+      "timestamp": 1759488309.0827935,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "disk_io",
+      "value": 43.02605335315891,
+      "timestamp": 1759488311.0850868,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 118.756426377544,
+      "timestamp": 1759488283.053445,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 72.94343353363429,
+      "timestamp": 1759488285.055774,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 72.91459711906029,
+      "timestamp": 1759488287.058063,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 67.98747193393176,
+      "timestamp": 1759488289.0602458,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 126.70906055800957,
+      "timestamp": 1759488291.0622282,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 57.97375720938159,
+      "timestamp": 1759488293.064533,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 125.27120102790036,
+      "timestamp": 1759488295.0668004,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 86.1790760367457,
+      "timestamp": 1759488297.0691528,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 127.50496409995901,
+      "timestamp": 1759488299.0712473,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 104.31603326745042,
+      "timestamp": 1759488301.0735877,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 124.87554571034624,
+      "timestamp": 1759488303.0759168,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 133.0935559409536,
+      "timestamp": 1759488305.0782104,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 76.2973580440515,
+      "timestamp": 1759488307.0805104,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 55.529616344864436,
+      "timestamp": 1759488309.0827963,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_count",
+      "value": 125.4127054035342,
+      "timestamp": 1759488311.0850897,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488283.0534544,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 2,
+      "timestamp": 1759488285.05578,
+      "type": "counter",
+      "level": "high",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488287.0580654,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488289.0602481,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488291.0622334,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488293.0645368,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488295.0668035,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488297.0691786,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488299.0712535,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488301.0735936,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488303.0759227,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488305.078215,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488307.080515,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488309.0828,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_errors",
+      "value": 0,
+      "timestamp": 1759488311.085093,
+      "type": "counter",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 56.680611587269944,
+      "timestamp": 1759488283.0534647,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 94.30871943698354,
+      "timestamp": 1759488285.0557845,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 28.099483418260604,
+      "timestamp": 1759488287.058067,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 55.39427141292428,
+      "timestamp": 1759488289.06025,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 43.2440221094395,
+      "timestamp": 1759488291.0622385,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 66.27698350086166,
+      "timestamp": 1759488293.0645406,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 34.47599795278587,
+      "timestamp": 1759488295.066807,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 49.08601500722088,
+      "timestamp": 1759488297.0691853,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 61.893204317336824,
+      "timestamp": 1759488299.0712595,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 51.168087163260246,
+      "timestamp": 1759488301.0736,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 17.01445381879892,
+      "timestamp": 1759488303.075929,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 42.50871712974125,
+      "timestamp": 1759488305.0782187,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 80.81621070028588,
+      "timestamp": 1759488307.0805182,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 45.0689214073965,
+      "timestamp": 1759488309.0828035,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    },
+    {
+      "name": "query_latency",
+      "value": 25.226606545013347,
+      "timestamp": 1759488311.0850966,
+      "type": "timer",
+      "level": "medium",
+      "labels": {
+        "simulation": "example",
+        "environment": "demo"
+      }
+    }
+  ],
+  "export_info": {
+    "count": 135,
+    "export_time": 1759488313.0891538,
+    "format": "smrti_metrics_v1"
+  },
+  "schema": {
+    "version": "1.0",
+    "fields": {
+      "name": "string",
+      "value": "number",
+      "timestamp": "number|string",
+      "type": "string",
+      "level": "string",
+      "labels": "object"
+    }
+  }
+}

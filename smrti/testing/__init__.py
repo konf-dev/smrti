@@ -1,0 +1,1 @@
+"""Smrti testing - Fixtures & harness for adapter certification."""

@@ -1,0 +1,10 @@
+# Project runtime configuration for mise (https://mise.jdx.dev)
+[env]
+_.python.venv = { path = ".venv", create = true }
+
+[tools]
+python = "3.13"
+
+[tasks.install]
+description = "Install dependencies into the project venv using uv"
+run = "pip install -r requirements.txt"

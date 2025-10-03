@@ -1,0 +1,5 @@
+# Smrti - Intelligent Multi-Tier Memory System
+# Development requirements file
+
+# Install in development mode with all extras
+-e .[all]
