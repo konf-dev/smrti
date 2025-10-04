@@ -12,7 +12,7 @@ import re
 import time
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional, Literal
+from typing import Any, Dict, Optional, Literal, List
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -150,6 +150,17 @@ class RecordEnvelope(BaseModel):
         if v is not None and not re.match(r'^[a-f0-9]+$', v):
             raise ValueError("Semantic hash must be hexadecimal")
         return v
+
+    # Backward compatibility aliases
+    @property
+    def record_id(self) -> UUID:
+        """Alias for id field (backward compatibility)."""
+        return self.id
+    
+    @property
+    def tenant_id(self) -> str:
+        """Alias for tenant field (backward compatibility)."""
+        return self.tenant
 
     def compute_semantic_hash(self) -> str:
         """
@@ -780,3 +791,76 @@ class WorkingMemoryConfig(BaseModel):
     ttl_seconds: int = Field(default=3600, ge=1, description="Time to live in seconds")
     consolidation_threshold: int = Field(default=800, ge=1, description="Consolidation trigger threshold")
     cleanup_interval: int = Field(default=300, ge=1, description="Cleanup interval in seconds")
+
+
+class ShortTermMemoryConfig(BaseModel):
+    """Configuration for short-term memory tier."""
+    
+    max_records: int = Field(default=10000, ge=1, description="Maximum number of records")
+    ttl_seconds: int = Field(default=86400, ge=1, description="Time to live in seconds (24 hours)")
+    consolidation_threshold: int = Field(default=8000, ge=1, description="Consolidation trigger threshold")
+    cleanup_interval: int = Field(default=3600, ge=1, description="Cleanup interval in seconds")
+
+
+class LongTermMemoryConfig(BaseModel):
+    """Configuration for long-term memory tier."""
+    
+    max_records: int = Field(default=1000000, ge=1, description="Maximum number of records")
+    similarity_threshold: float = Field(default=0.7, ge=0.0, le=1.0, description="Similarity threshold for retrieval")
+    consolidation_enabled: bool = Field(default=True, description="Enable consolidation")
+
+
+class EpisodicMemoryConfig(BaseModel):
+    """Configuration for episodic memory tier."""
+    
+    max_records: int = Field(default=100000, ge=1, description="Maximum number of records")
+    retention_days: int = Field(default=365, ge=1, description="Number of days to retain records")
+    consolidation_enabled: bool = Field(default=True, description="Enable consolidation")
+
+
+class SemanticMemoryConfig(BaseModel):
+    """Configuration for semantic memory tier."""
+    
+    max_entities: int = Field(default=10000, ge=1, description="Maximum number of entities")
+    max_relationships: int = Field(default=100000, ge=1, description="Maximum number of relationships")
+    consolidation_enabled: bool = Field(default=True, description="Enable consolidation")
+
+
+# =============================================================================
+# STUB MODELS - TODO: Implement properly
+# =============================================================================
+
+class EntityRecord(BaseModel):
+    """Stub for entity record - represents an entity in semantic memory."""
+    entity_id: str
+    entity_type: str
+    name: str
+    properties: Dict[str, Any] = Field(default_factory=dict)
+    description: Optional[str] = None
+
+
+class ConceptRecord(BaseModel):
+    """Stub for concept record - represents a concept in semantic memory."""
+    concept_id: str
+    name: str
+    description: Optional[str] = None
+    properties: Dict[str, Any] = Field(default_factory=dict)
+    related_concepts: List[str] = Field(default_factory=list)
+
+
+class ConversationTurn(BaseModel):
+    """Stub for conversation turn - represents a single turn in a conversation."""
+    turn_id: str
+    role: str  # 'user' or 'assistant'
+    content: str
+    timestamp: datetime
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+
+
+class KnowledgeRecord(BaseModel):
+    """Stub for knowledge record - represents a piece of knowledge."""
+    knowledge_id: str
+    content: str
+    category: Optional[str] = None
+    confidence: float = Field(default=1.0, ge=0.0, le=1.0)
+    metadata: Dict[str, Any] = Field(default_factory=dict)

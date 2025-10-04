@@ -16,8 +16,9 @@ try:
     import chromadb
     from chromadb.api.types import Documents, EmbeddingFunction, Embeddings, IDs, Metadatas
     from chromadb.config import Settings as ChromaSettings
-    from chromadb.errors import InvalidCollectionException, ChromaError
+    from chromadb.errors import ChromaError, NotFoundError
     HAS_CHROMADB = True
+    InvalidCollectionException = NotFoundError  # Map to NotFoundError for backward compatibility
 except ImportError:
     HAS_CHROMADB = False
     chromadb = None

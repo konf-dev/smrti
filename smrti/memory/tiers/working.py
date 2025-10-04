@@ -16,7 +16,7 @@ from smrti.core.registry import AdapterRegistry
 from smrti.schemas.models import (
     MemoryQuery,
     RecordEnvelope,
-    ConversationTurn,
+    # ConversationTurn,  # TODO: Add back when defined
     ContextRecord,
     WorkingMemoryConfig
 )

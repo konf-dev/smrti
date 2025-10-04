@@ -23,7 +23,7 @@ from smrti.core.exceptions import (
     StorageError, 
     ValidationError
 )
-from smrti.core.registry import AdapterRegistry
+from smrti.core.registry import AdapterRegistry, SmrtiAdapterRegistry
 from smrti.core.retrieval_engine import (
     QueryStrategy, 
     ResultMergeStrategy, 
@@ -38,25 +38,55 @@ from smrti.schemas.models import (
     TextContent
 )
 
-# Import all adapters for registration
-from smrti.adapters.storage import (
-    ChromaDBAdapter,
-    ElasticsearchAdapter,
-    Neo4jAdapter,
-    PostgreSQLAdapter,
-    RedisAdapter
-)
-from smrti.adapters.embedding import (
-    OpenAIEmbeddingProvider,
-    SentenceTransformersProvider
-)
-from smrti.memory.tiers import (
-    EpisodicMemory,
-    LongTermMemory,
-    SemanticMemory,
-    ShortTermMemory,
-    WorkingMemory
-)
+# Import all adapters for registration (with optional import handling)
+try:
+    from smrti.adapters.storage import RedisAdapter
+except ImportError as e:
+    RedisAdapter = None
+    
+try:
+    from smrti.adapters.vector import ChromaDBAdapter
+except ImportError:
+    ChromaDBAdapter = None
+
+try:
+    from smrti.adapters.search import ElasticsearchAdapter
+except ImportError:
+    ElasticsearchAdapter = None
+
+try:
+    from smrti.adapters.graph import Neo4jAdapter
+except ImportError:
+    Neo4jAdapter = None
+
+try:
+    from smrti.adapters.database import PostgreSQLAdapter
+except ImportError:
+    PostgreSQLAdapter = None
+
+try:
+    from smrti.adapters.embedding import (
+        OpenAIEmbeddingProvider,
+        SentenceTransformersProvider
+    )
+except ImportError:
+    OpenAIEmbeddingProvider = None
+    SentenceTransformersProvider = None
+
+try:
+    from smrti.memory.tiers import (
+        EpisodicMemory,
+        LongTermMemory,
+        SemanticMemory,
+        ShortTermMemory,
+        WorkingMemory
+    )
+except ImportError as e:
+    EpisodicMemory = None
+    LongTermMemory = None
+    SemanticMemory = None
+    ShortTermMemory = None
+    WorkingMemory = None
 
 
 class SmrtiConfig:
@@ -224,17 +254,17 @@ class Smrti(BaseAdapter):
         logging.basicConfig(level=getattr(logging, self.config.log_level))
         
         # Core components
-        self.registry = AdapterRegistry()
+        self.registry = SmrtiAdapterRegistry()
         self.context_assembly: Optional[ContextAssemblyEngine] = None
         self.retrieval_engine: Optional[UnifiedRetrievalEngine] = None
         self.consolidation_engine: Optional[MemoryConsolidationEngine] = None
         
-        # Memory tiers
-        self.working_memory: Optional[WorkingMemory] = None
-        self.short_term_memory: Optional[ShortTermMemory] = None  
-        self.long_term_memory: Optional[LongTermMemory] = None
-        self.episodic_memory: Optional[EpisodicMemory] = None
-        self.semantic_memory: Optional[SemanticMemory] = None
+        # Memory tiers (using Any for type hint since classes may be None)
+        self.working_memory: Optional[Any] = None
+        self.short_term_memory: Optional[Any] = None  
+        self.long_term_memory: Optional[Any] = None
+        self.episodic_memory: Optional[Any] = None
+        self.semantic_memory: Optional[Any] = None
         
         # Session management
         self.active_sessions: Dict[str, SmrtiSession] = {}
@@ -362,44 +392,64 @@ class Smrti(BaseAdapter):
         self.logger.info("Initializing storage adapters...")
         
         # Redis adapter (for working/short-term memory)
-        try:
-            redis_adapter = RedisAdapter(**self.config.redis_config)
-            self.registry.register_tier_store("redis", redis_adapter)
-            self.logger.info("Registered Redis adapter")
-        except Exception as e:
-            self.logger.warning(f"Failed to initialize Redis adapter: {e}")
+        if RedisAdapter is not None:
+            try:
+                redis_adapter = RedisAdapter(
+                    tier_name="redis",
+                    config=self.config.redis_config
+                )
+                self.registry.register_tier_store("redis", redis_adapter)
+                self.logger.info("Registered Redis adapter")
+            except Exception as e:
+                self.logger.warning(f"Failed to initialize Redis adapter: {e}")
         
         # ChromaDB adapter (for long-term memory)
-        try:
-            chroma_adapter = ChromaDBAdapter(**self.config.chroma_config)
-            self.registry.register_tier_store("chroma", chroma_adapter)
-            self.logger.info("Registered ChromaDB adapter")
-        except Exception as e:
-            self.logger.warning(f"Failed to initialize ChromaDB adapter: {e}")
+        if ChromaDBAdapter is not None:
+            try:
+                chroma_adapter = ChromaDBAdapter(
+                    collection_name="smrti_longterm",
+                    config=self.config.chroma_config
+                )
+                self.registry.register_tier_store("chroma", chroma_adapter)
+                self.logger.info("Registered ChromaDB adapter")
+            except Exception as e:
+                self.logger.warning(f"Failed to initialize ChromaDB adapter: {e}")
         
         # PostgreSQL adapter (for episodic memory)
-        try:
-            postgres_adapter = PostgreSQLAdapter(**self.config.postgres_config)
-            self.registry.register_tier_store("postgres", postgres_adapter)
-            self.logger.info("Registered PostgreSQL adapter")
-        except Exception as e:
-            self.logger.warning(f"Failed to initialize PostgreSQL adapter: {e}")
+        if PostgreSQLAdapter is not None:
+            try:
+                postgres_adapter = PostgreSQLAdapter(
+                    tier_name="episodic",
+                    config=self.config.postgres_config
+                )
+                self.registry.register_tier_store("postgres", postgres_adapter)
+                self.logger.info("Registered PostgreSQL adapter")
+            except Exception as e:
+                self.logger.warning(f"Failed to initialize PostgreSQL adapter: {e}")
         
         # Neo4j adapter (for semantic memory)
-        try:
-            neo4j_adapter = Neo4jAdapter(**self.config.neo4j_config)
-            self.registry.register_tier_store("neo4j", neo4j_adapter)
-            self.logger.info("Registered Neo4j adapter")
-        except Exception as e:
-            self.logger.warning(f"Failed to initialize Neo4j adapter: {e}")
+        if Neo4jAdapter is not None:
+            try:
+                neo4j_adapter = Neo4jAdapter(
+                    tier_name="semantic",
+                    config=self.config.neo4j_config
+                )
+                self.registry.register_tier_store("neo4j", neo4j_adapter)
+                self.logger.info("Registered Neo4j adapter")
+            except Exception as e:
+                self.logger.warning(f"Failed to initialize Neo4j adapter: {e}")
         
         # Elasticsearch adapter (for procedural memory)
-        try:
-            es_adapter = ElasticsearchAdapter(**self.config.elasticsearch_config)
-            self.registry.register_tier_store("elasticsearch", es_adapter)
-            self.logger.info("Registered Elasticsearch adapter")
-        except Exception as e:
-            self.logger.warning(f"Failed to initialize Elasticsearch adapter: {e}")
+        if ElasticsearchAdapter is not None:
+            try:
+                es_adapter = ElasticsearchAdapter(
+                    tier_name="procedural",
+                    config=self.config.elasticsearch_config
+                )
+                self.registry.register_tier_store("elasticsearch", es_adapter)
+                self.logger.info("Registered Elasticsearch adapter")
+            except Exception as e:
+                self.logger.warning(f"Failed to initialize Elasticsearch adapter: {e}")
     
     async def _initialize_memory_tiers(self) -> None:
         """Initialize memory tier implementations."""

@@ -306,6 +306,34 @@ class MemoryError(SmrtiError):
     pass
 
 
+class StorageError(MemoryError):
+    """Error during memory storage operations."""
+    
+    def __init__(
+        self, 
+        message: str, 
+        tier: str | None = None,
+        record_id: str | None = None
+    ):
+        super().__init__(message)
+        self.tier = tier
+        self.record_id = record_id
+
+
+class RetrievalError(MemoryError):
+    """Error during memory retrieval operations."""
+    
+    def __init__(
+        self, 
+        message: str, 
+        tier: str | None = None,
+        query: str | None = None
+    ):
+        super().__init__(message)
+        self.tier = tier
+        self.query = query
+
+
 class LifecycleError(SmrtiError):
     """Lifecycle management operation errors."""
     pass

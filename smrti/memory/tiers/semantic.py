@@ -16,8 +16,8 @@ from smrti.core.registry import AdapterRegistry
 from smrti.schemas.models import (
     MemoryQuery,
     RecordEnvelope,
-    EntityRecord,
-    ConceptRecord,
+    EntityRecord,  # Stub model - TODO: Implement properly
+    ConceptRecord,  # Stub model - TODO: Implement properly
     SemanticMemoryConfig
 )
 

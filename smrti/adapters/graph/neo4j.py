@@ -43,8 +43,7 @@ from smrti.core.registry import AdapterCapability
 from smrti.schemas.models import (
     MemoryQuery, 
     RecordEnvelope, 
-    ConversationTurn,
-    EntityRecord
+    ConversationTurn
 )
 
 

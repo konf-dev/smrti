@@ -166,6 +166,37 @@ class SmrtiAdapterRegistry(AdapterRegistry):
         self._health_check_interval = 300  # 5 minutes
         self._auto_discovery_enabled = True
     
+    # Properties to access registries
+    @property
+    def embedding_providers(self) -> Dict[str, Any]:
+        """Get embedding providers dict."""
+        return {name: info.instance for name, info in self._embedding_providers.items()}
+    
+    @property
+    def tier_stores(self) -> Dict[str, Any]:
+        """Get tier stores dict."""
+        return {name: info.instance for name, info in self._tier_stores.items()}
+    
+    @property
+    def vector_stores(self) -> Dict[str, Any]:
+        """Get vector stores dict."""
+        return {name: info.instance for name, info in self._vector_stores.items()}
+    
+    @property
+    def graph_stores(self) -> Dict[str, Any]:
+        """Get graph stores dict."""
+        return {name: info.instance for name, info in self._graph_stores.items()}
+    
+    @property
+    def lexical_indices(self) -> Dict[str, Any]:
+        """Get lexical indices dict."""
+        return {name: info.instance for name, info in self._lexical_indices.items()}
+    
+    @property
+    def memory_tiers(self) -> Dict[str, Any]:
+        """Get memory tiers dict."""
+        return {name: info.instance for name, info in self._smrti_providers.items()}
+    
     def register_embedding_provider(
         self, 
         name: str, 
@@ -411,6 +442,16 @@ class SmrtiAdapterRegistry(AdapterRegistry):
         
         self._smrti_providers[name] = info
         self._update_capability_index(info)
+    
+    def register_memory_tier(
+        self,
+        name: str,
+        tier: Any,
+        capabilities: List[AdapterCapability] | None = None,
+        config: Dict[str, Any] | None = None
+    ) -> None:
+        """Register a memory tier (alias for register_smrti_provider)."""
+        self.register_smrti_provider(name, tier, capabilities, config)
     
     def get_embedding_provider(self, name: str | None = None) -> EmbeddingProvider:
         """Get registered embedding provider."""

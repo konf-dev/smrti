@@ -135,19 +135,26 @@ class RedisAdapter(BaseTierStore):
         """Initialize Redis connections and connection pools."""
         try:
             # Create primary connection pool
-            self._pool = ConnectionPool(
-                host=self._host,
-                port=self._port,
-                db=self._db,
-                password=self._password,
-                username=self._username,
-                ssl=self._ssl,
-                max_connections=self._max_connections,
-                socket_timeout=self._socket_timeout,
-                socket_connect_timeout=self._socket_connect_timeout,
-                retry_on_timeout=self._retry_on_timeout,
-                health_check_interval=self._health_check_interval
-            )
+            pool_kwargs = {
+                "host": self._host,
+                "port": self._port,
+                "db": self._db,
+                "max_connections": self._max_connections,
+                "socket_timeout": self._socket_timeout,
+                "socket_connect_timeout": self._socket_connect_timeout,
+                "retry_on_timeout": self._retry_on_timeout,
+                "health_check_interval": self._health_check_interval
+            }
+            
+            # Only add optional params if they're set
+            if self._password:
+                pool_kwargs["password"] = self._password
+            if self._username:
+                pool_kwargs["username"] = self._username
+            if self._ssl:
+                pool_kwargs["ssl"] = self._ssl
+            
+            self._pool = ConnectionPool(**pool_kwargs)
             
             self._redis = Redis(connection_pool=self._pool)
             
@@ -156,18 +163,28 @@ class RedisAdapter(BaseTierStore):
             
             # Initialize replica connections if configured
             for replica_config in self._replica_hosts:
-                replica_pool = ConnectionPool(
-                    host=replica_config["host"],
-                    port=replica_config.get("port", 6379),
-                    db=replica_config.get("db", self._db),
-                    password=replica_config.get("password", self._password),
-                    username=replica_config.get("username", self._username),
-                    ssl=replica_config.get("ssl", self._ssl),
-                    max_connections=self._max_connections // 2,
-                    socket_timeout=self._socket_timeout,
-                    socket_connect_timeout=self._socket_connect_timeout,
-                    retry_on_timeout=self._retry_on_timeout
-                )
+                replica_kwargs = {
+                    "host": replica_config["host"],
+                    "port": replica_config.get("port", 6379),
+                    "db": replica_config.get("db", self._db),
+                    "max_connections": self._max_connections // 2,
+                    "socket_timeout": self._socket_timeout,
+                    "socket_connect_timeout": self._socket_connect_timeout,
+                    "retry_on_timeout": self._retry_on_timeout
+                }
+                
+                # Only add optional params if they're set
+                password = replica_config.get("password", self._password)
+                if password:
+                    replica_kwargs["password"] = password
+                username = replica_config.get("username", self._username)
+                if username:
+                    replica_kwargs["username"] = username
+                ssl = replica_config.get("ssl", self._ssl)
+                if ssl:
+                    replica_kwargs["ssl"] = ssl
+                
+                replica_pool = ConnectionPool(**replica_kwargs)
                 self._replica_pools.append(replica_pool)
             
             # Load Lua scripts
@@ -308,7 +325,7 @@ class RedisAdapter(BaseTierStore):
         """Internal store implementation."""
         self._validate_record(record)
         
-        key = self._make_key(record.record_id)
+        key = self._make_key(str(record.record_id))
         serialized = self._serialize_record(record)
         
         # Check value size
@@ -337,7 +354,7 @@ class RedisAdapter(BaseTierStore):
             
             if success:
                 self._update_stats("store", 1, len(serialized))
-                return record.record_id
+                return str(record.record_id)
             else:
                 raise RedisAdapterError(
                     f"Failed to store record {record.record_id}",

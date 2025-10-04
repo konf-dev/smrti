@@ -47,13 +47,11 @@ from smrti.core.exceptions import (
     RetryableError,
     IntegrityError
 )
-from smrti.core.protocols import TierStore, SearchStore
+from smrti.core.protocols import TierStore
 from smrti.core.registry import AdapterCapability
 from smrti.schemas.models import (
     MemoryQuery, 
-    RecordEnvelope, 
-    ProcedureRecord,
-    SkillRecord
+    RecordEnvelope
 )
 
 
@@ -417,9 +415,10 @@ class ElasticsearchAdapter(BaseTierStore):
             doc['provenance'] = record.provenance.model_dump()
         
         # Add procedural-specific fields
-        if isinstance(record.content, (ProcedureRecord, SkillRecord)):
-            doc['procedure_type'] = getattr(record.content, 'procedure_type', 'unknown')
-            doc['complexity_score'] = getattr(record.content, 'complexity', 0.5)
+        # TODO: Add back when ProcedureRecord and SkillRecord are defined
+        # if isinstance(record.content, (ProcedureRecord, SkillRecord)):
+        #     doc['procedure_type'] = getattr(record.content, 'procedure_type', 'unknown')
+        #     doc['complexity_score'] = getattr(record.content, 'complexity', 0.5)
             
         return doc
     

@@ -15,6 +15,32 @@ from .schemas.models import (
     MemoryRecord
 )
 
+# Main API classes
+from .api import (
+    Smrti,
+    SmrtiConfig,
+    SmrtiSession,
+    create_smrti_system
+)
+
+# Retrieval engine components
+from .core.retrieval_engine import (
+    QueryStrategy,
+    ResultMergeStrategy,
+    RetrievalConfig
+)
+
+# Context assembly components
+from .core.context_assembly import (
+    ContextAssemblyConfig,
+    ScoredRecord
+)
+
+# Consolidation components
+from .core.consolidation import (
+    ConsolidationConfig
+)
+
 __all__ = [
     # Version
     "__version__",
@@ -23,5 +49,23 @@ __all__ = [
     "RecordEnvelope",
     "MemoryQuery",
     "TextContent",
-    "MemoryRecord"
+    "MemoryRecord",
+    
+    # Main API
+    "Smrti",
+    "SmrtiConfig",
+    "SmrtiSession",
+    "create_smrti_system",
+    
+    # Retrieval
+    "QueryStrategy",
+    "ResultMergeStrategy",
+    "RetrievalConfig",
+    
+    # Context Assembly
+    "ContextAssemblyConfig",
+    "ScoredRecord",
+    
+    # Consolidation
+    "ConsolidationConfig"
 ]

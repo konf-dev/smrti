@@ -17,7 +17,7 @@ from smrti.schemas.models import (
     MemoryQuery,
     RecordEnvelope,
     EventRecord,
-    ConversationTurn,
+    # ConversationTurn,  # TODO: Add back when defined
     EpisodicMemoryConfig
 )
 
