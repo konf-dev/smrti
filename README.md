@@ -196,11 +196,10 @@ docker-compose up -d
 
 ## 📚 Documentation
 
-- **[Architecture Guide](./docs/architecture.md)**: Deep dive into system design
-- **[Adapter Development](./docs/adapters.md)**: Building custom providers
-- **[Configuration Reference](./docs/configuration.md)**: Complete settings guide
-- **[API Documentation](./docs/api.md)**: Full API reference
-- **[Performance Tuning](./docs/performance.md)**: Optimization best practices
+- **[User Guide](./docs/USER_GUIDE.md)**: Complete guide to using Smrti - start here!
+- **[Development Guide](./docs/DEVELOPMENT_GUIDE.md)**: Contributing and extending Smrti
+- **[Docker Setup](./docs/DOCKER_SETUP.md)**: Running Smrti with Docker
+- **[Examples](./examples/)**: Working code examples and demos
 
 ## 🤝 Contributing
 
@@ -266,4 +265,4 @@ Licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for det
 
 ---
 
-**Ready to give your AI systems perfect memory?** Start with our [Quick Start Guide](./docs/quickstart.md) or explore the [complete documentation](./docs/).
+**Ready to give your AI systems perfect memory?** Get started with the [User Guide](./docs/USER_GUIDE.md) or explore the [examples](./examples/).

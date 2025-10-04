@@ -212,6 +212,7 @@ __marimo__/
 *.faiss
 *.index
 chroma_data/
+data/
 
 # Redis dumps
 dump.rdb
@@ -231,6 +232,12 @@ config/production.yaml
 # Benchmarks
 benchmark-results/
 .benchmarks/
+
+# Test results
+test-results/
+
+# Metrics
+metrics/
 
 # Secrets
 secrets.yaml
