@@ -1,268 +1,322 @@
-# Smrti: Intelligent Multi-Tier Memory System
+# Smrti v2.0 - Multi-Tier Memory Storage System
 
-**Sanskrit: स्मृति - "remembrance"**
+**Production-grade memory storage for agentic AI applications**
 
-A standalone, provider-agnostic cognitive memory substrate for AI systems. Smrti enables agents and LLM-powered workflows to retain, organize, retrieve, and evolve knowledge across five complementary tiers: **Working**, **Short-Term**, **Long-Term**, **Episodic**, and **Semantic** memory.
-
-[![CI](https://github.com/konf-dev/smrti/workflows/CI/badge.svg)](https://github.com/konf-dev/smrti/actions)
-[![codecov](https://codecov.io/gh/konf-dev/smrti/branch/main/graph/badge.svg)](https://codecov.io/gh/konf-dev/smrti)
-[![PyPI version](https://badge.fury.io/py/smrti.svg)](https://badge.fury.io/py/smrti)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Type checked: mypy](https://img.shields.io/badge/type%20checked-mypy-blue.svg)](http://mypy-lang.org/)
 
-## 🚀 Quick Start
+## Overview
 
-### Installation
+Smrti is a specialized storage system designed for agentic AI applications that require multi-tier memory management. It provides **5 distinct memory types**, each optimized for different access patterns and retention policies.
 
-```bash
-# Basic installation
-pip install smrti
+### Key Features
 
-# With Redis and vector store support
-pip install smrti[redis,vector-basic]
+- **5 Memory Tiers**: Working, Short-term, Long-term, Episodic, and Semantic
+- **Protocol-Based Architecture**: Pluggable storage adapters
+- **Multi-Tenant**: Complete namespace isolation from day one
+- **Production-Ready**: Comprehensive tests, structured logging, metrics
+- **Async-First**: Non-blocking I/O throughout
+- **Observable**: Prometheus metrics and structured logs
 
-# Full development setup
-pip install smrti[all]
-```
-
-### Basic Usage
-
-```python
-from smrti import SmrtiClient, Settings
-
-# Configure memory tiers
-settings = Settings(
-    tiers={
-        "working": {"backend": "redis", "ttl_seconds": 300},
-        "long_term": {"backend": "chroma", "half_life_days": 60},
-    }
-)
-
-# Initialize client
-client = SmrtiClient(settings=settings)
-
-# Store events and facts
-await client.record_event({
-    "user_id": "user123",
-    "event_type": "user_login", 
-    "event_data": {"timestamp": "2025-10-03T10:00:00Z"},
-    "tenant": "acme",
-    "namespace": "app"
-})
-
-await client.store_fact({
-    "entity_id": "user123",
-    "predicate": "preferred_language", 
-    "object": "python",
-    "confidence": 0.95,
-    "tenant": "acme",
-    "namespace": "app"
-})
-
-# Build context for LLM
-context = await client.build_context(
-    user_id="user123",
-    query="What programming languages does the user know?",
-    token_budget=4000
-)
-
-print(context.sections[0].items)  # Retrieved facts and events
-```
-
-## 🏗️ Architecture
-
-### Five-Tier Memory System
-
-| Tier | Purpose | Retention | Backend Examples |
-|------|---------|-----------|------------------|
-| **Working** | Current turn context | Minutes | Redis (TTL) |
-| **Short-Term** | Session continuity | Hours/Days | Redis (session-scoped) |
-| **Long-Term** | Durable knowledge | Months | ChromaDB, Pinecone, Weaviate |
-| **Episodic** | Temporal events | Weeks/Months | PostgreSQL, time-series DB |
-| **Semantic** | Structured facts | Months+ | Neo4j, NetworkX graphs |
-
-### Hybrid Retrieval Engine
-
-Smrti combines multiple retrieval modalities for maximum relevance:
-
-- **Vector Similarity**: Dense embeddings for semantic search
-- **Lexical Search**: BM25 keyword matching
-- **Graph Traversal**: Entity relationships and fact chains  
-- **Temporal Filtering**: Time-based event sequences
-- **Adaptive Fusion**: Weighted score combination with re-ranking
-
-### Provider-Agnostic Architecture
-
-```python
-# Easy adapter swapping - no code changes needed
-settings = Settings(
-    tiers={
-        "long_term": {
-            "backend": "pinecone",  # Switch from ChromaDB to Pinecone
-            "adapter_config": {
-                "api_key": "your-key",
-                "index_name": "smrti-ltm"
-            }
-        }
-    },
-    embedding_provider="openai",  # Switch from Sentence Transformers
-)
-```
-
-## 🔧 Development Setup
+## Quick Start
 
 ### Prerequisites
 
 - Python 3.11+
-- Docker and Docker Compose
-- Redis, PostgreSQL, ChromaDB, Neo4j (via Docker)
+- Docker & Docker Compose
+- Poetry (for local development)
 
-### Full Development Environment
-
-```bash
-# Clone repository
-git clone https://github.com/konf-dev/smrti.git
-cd smrti
-
-# Setup development environment
-make setup-dev
-
-# Run tests
-make test
-
-# Start development services
-make docker-up
-
-# Validate configuration
-make config-validate
-```
-
-### Docker Development Stack
+### Running with Docker Compose (Recommended)
 
 ```bash
-# Start all services
+# Start all services (Redis, Qdrant, PostgreSQL, API)
 docker-compose up -d
 
-# Services available:
-# - Redis: localhost:6379
-# - ChromaDB: localhost:8000  
-# - PostgreSQL: localhost:5432
-# - Neo4j: localhost:7474 (browser), localhost:7687 (bolt)
+# Wait for services to be healthy (30-60 seconds)
+docker-compose ps
+
+# View logs
+docker-compose logs -f api
+
+# Test the API
+curl http://localhost:8000/health
 ```
 
-## 📊 Key Features
+See [Docker Setup Guide](docker/README.md) for detailed instructions.
 
-### 🧠 Cognitive Memory Model
-- **Neuroscience-Inspired**: Five-tier taxonomy mirrors human memory systems
-- **Lifecycle Management**: Automatic consolidation, summarization, and decay
-- **Provenance Tracking**: Full lineage and transformation history
-
-### ⚡ Performance & Scalability  
-- **Adaptive Context**: Token-budget aware assembly with reduction strategies
-- **Parallel Retrieval**: Concurrent multi-tier searches with failure isolation
-- **Caching Layers**: Embedding, candidate, and context result caching
-
-### 🔒 Enterprise Ready
-- **Multi-Tenant**: Strict namespace isolation with optional encryption
-- **Observability**: OpenTelemetry tracing + Prometheus metrics
-- **Security**: PII redaction, data classification, integrity checks
-
-### 🔌 Extensible Architecture
-- **Plugin System**: Easy adapter development for new backends
-- **Future-Proof**: Multimodal hooks for images, audio, video
-- **Hot Swappable**: Runtime provider switching without restarts
-
-## 📈 Performance Targets
-
-| Operation | p95 Latency | Notes |
-|-----------|-------------|-------|
-| `build_context` (warm) | < 250ms | With embedding cache hits |
-| Vector search | < 120ms | ANN-optimized indexes |  
-| Hybrid retrieval | < 400ms | Full lexical + vector + graph |
-| Consolidation batch | < 2s | 200 messages → summary |
-
-## 🛡️ Security & Privacy
-
-### Data Protection
-- **Namespace Isolation**: Mandatory tenant/namespace scoping
-- **PII Redaction**: Configurable pattern-based filtering
-- **Encryption Hooks**: Adapter-mediated encryption at rest
-- **Integrity Validation**: Checksums and lineage verification
-
-### Compliance Ready
-- **GDPR**: Right to erasure with cascade deletion
-- **SOC2**: Audit logs and change management
-- **Multi-Region**: Data residency controls (roadmap)
-
-## 📚 Documentation
-
-- **[User Guide](./docs/USER_GUIDE.md)**: Complete guide to using Smrti - start here!
-- **[Development Guide](./docs/DEVELOPMENT_GUIDE.md)**: Contributing and extending Smrti
-- **[Docker Setup](./docs/DOCKER_SETUP.md)**: Running Smrti with Docker
-- **[Examples](./examples/)**: Working code examples and demos
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
-
-### Development Workflow
+### Local Development Setup
 
 ```bash
-# Create feature branch
-git checkout -b feature/new-adapter
+# Install dependencies
+poetry install
 
-# Make changes and test
-make quality-gate
-make test
-make adapter-cert
+# Copy environment configuration
+cp .env.example .env
 
-# Submit PR
-git push origin feature/new-adapter
+# Edit .env with your settings
+# Set connection strings for Redis, Qdrant, and PostgreSQL
+vim .env
+
+# Start external services (requires Docker)
+# Redis
+docker run -d -p 6379:6379 redis:7-alpine
+
+# Qdrant
+docker run -d -p 6333:6333 qdrant/qdrant:latest
+
+# PostgreSQL (and initialize schema)
+docker run -d -p 5432:5432 \
+  -e POSTGRES_USER=smrti \
+  -e POSTGRES_PASSWORD=smrti \
+  -e POSTGRES_DB=smrti \
+  postgres:15-alpine
+
+# Initialize PostgreSQL schema
+PGPASSWORD=smrti psql -h localhost -U smrti -d smrti -f src/smrti/storage/init_db.sql
+
+# Run the API server
+poetry run smrti
+
+# Or with uvicorn directly
+poetry run uvicorn smrti.api.main:app --reload
 ```
 
-### Adapter Certification
+## Architecture
 
-New adapters must pass our certification harness:
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         External Clients                         │
+└─────────────────────────────────────────────────────────────────┘
+                              ▼ HTTP
+┌─────────────────────────────────────────────────────────────────┐
+│                         API Layer (FastAPI)                      │
+│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐   │
+│  │ Auth Middleware│  │  CORS Middleware│  │ Logging Middle │   │
+│  └────────────────┘  └────────────────┘  └────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      Storage Manager                             │
+│          (Routes requests to appropriate adapter)                │
+└─────────────────────────────────────────────────────────────────┘
+         ▼                ▼                ▼                ▼
+┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+│   Redis     │  │   Qdrant    │  │  Postgres   │  │  Embedding  │
+│  Adapters   │  │   Adapter   │  │  Adapters   │  │   Service   │
+└─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘
+```
+
+## Memory Types
+
+| Type | Storage | TTL | Use Case | Backend |
+|------|---------|-----|----------|---------|
+| **WORKING** | In-memory | 5 min | Current context, immediate tasks | Redis |
+| **SHORT_TERM** | In-memory | 1 hour | Session summary, recent history | Redis |
+| **LONG_TERM** | Persistent | ∞ | Semantic facts, knowledge base | Qdrant |
+| **EPISODIC** | Persistent | ∞ | Event timeline, temporal queries | PostgreSQL |
+| **SEMANTIC** | Persistent | ∞ | Knowledge graph, entity relationships | PostgreSQL |
+
+## API Examples
+
+All API requests require:
+- **Authorization** header: `Bearer <api_key>`
+- **X-Namespace** header: Namespace identifier (e.g., `user:123` or `org:acme:project:alpha`)
+
+### Store a Memory
 
 ```bash
-# Run full adapter certification
-make adapter-cert
-
-# Certify specific adapter  
-make adapter-cert-redis
+curl -X POST http://localhost:8000/memory/store \
+  -H "Authorization: Bearer dev-key-123" \
+  -H "X-Namespace: user:123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "memory_type": "EPISODIC",
+    "data": {
+      "text": "User completed workout goal",
+      "event_type": "goal_completed"
+    },
+    "metadata": {
+      "impact": "high",
+      "category": "fitness"
+    }
+  }'
 ```
 
-## 📋 Roadmap
+### Retrieve Memories
 
-### Current (Phase 1-3)
-- ✅ Core five-tier memory system
-- ✅ Hybrid retrieval engine  
-- ✅ Redis + ChromaDB + PostgreSQL + Neo4j adapters
-- ✅ OpenTelemetry observability
-- ✅ Full test coverage + CI/CD
+```bash
+curl -X POST http://localhost:8000/memory/retrieve \
+  -H "Authorization: Bearer dev-key-123" \
+  -H "X-Namespace: user:123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "memory_type": "EPISODIC",
+    "query": "workout",
+    "limit": 10,
+    "filters": {
+      "event_type": "goal_completed"
+    }
+  }'
+```
 
-### Near Term (Phase 4-5) 
-- 🔄 Advanced lifecycle management
-- 🔄 Cross-encoder re-ranking
-- 🔄 Adaptive weight learning
-- 🔄 Enterprise security enhancements
+### Delete Memory
 
-### Future (Phase 6+)
-- 🗓️ Multimodal memory (images, audio, video)
-- 🗓️ Federated memory synchronization  
-- 🗓️ Procedural memory tier
-- 🗓️ Differential privacy features
+```bash
+curl -X DELETE "http://localhost:8000/memory/episodic/550e8400-e29b-41d4-a716-446655440000" \
+  -H "Authorization: Bearer dev-key-123" \
+  -H "X-Namespace: user:123"
+```
 
-## 📄 License
+### Health Check
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for details.
+```bash
+# No authentication required for health endpoint
+curl http://localhost:8000/health
+```
 
-## 🙏 Acknowledgments
+## Development
 
-- **Sanskrit Etymology**: स्मृति (smrti) - remembrance, memory, mindfulness
-- **Cognitive Science**: Inspired by Atkinson-Shiffrin multi-store memory model
-- **Community**: Built with ❤️ by [KonfSutra](https://konf.dev) and contributors
+### Running Tests
+
+```bash
+# Run all tests
+poetry run pytest
+
+# Run unit tests only (fast)
+poetry run pytest -m unit
+
+# Run with coverage
+poetry run pytest --cov=src --cov-report=html
+
+# Run specific test file
+poetry run pytest tests/unit/test_config.py -v
+```
+
+### Code Quality
+
+```bash
+# Format code
+poetry run black src tests
+
+# Lint code
+poetry run ruff check src tests
+
+# Type check
+poetry run mypy src
+
+# Run all quality checks
+poetry run black src tests && poetry run ruff check src tests && poetry run mypy src
+```
+
+## Configuration
+
+All configuration is via environment variables. See [.env.example](.env.example) for available options.
+
+### Key Configuration Options
+
+- `API_KEYS`: Comma-separated list of valid API keys
+- `REDIS_URL`: Redis connection URL
+- `QDRANT_URL`: Qdrant server URL  
+- `POSTGRES_URL`: PostgreSQL connection URL
+- `EMBEDDING_PROVIDER`: `local` or `api`
+- `LOG_LEVEL`: Logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`)
+
+## Monitoring
+
+### Health Checks
+
+```bash
+# Liveness (is API responding?)
+curl http://localhost:8000/health
+
+# Readiness (are backends connected?)
+curl http://localhost:8000/health
+```
+
+### Metrics
+
+Prometheus metrics are exposed at `/metrics`:
+
+```bash
+curl http://localhost:8000/metrics
+```
+
+Key metrics:
+- `smrti_http_requests_total` - Total HTTP requests
+- `smrti_storage_operations_total` - Storage operations
+- `smrti_embedding_generations_total` - Embeddings generated
+- `smrti_errors_total` - Error counts
+
+## Project Structure
+
+```
+smrti/
+├── src/smrti/
+│   ├── api/                    # FastAPI application
+│   │   ├── routes/             # API endpoints (health, memory)
+│   │   ├── auth.py             # API key authentication middleware
+│   │   ├── models.py           # Pydantic request/response models
+│   │   ├── storage_manager.py  # Coordinates all adapters
+│   │   └── main.py             # FastAPI app & lifespan
+│   ├── core/                   # Core types, config, logging
+│   │   ├── types.py            # MemoryType enum
+│   │   ├── config.py           # Pydantic settings
+│   │   ├── logging.py          # Structured logging
+│   │   ├── metrics.py          # Prometheus metrics
+│   │   └── exceptions.py       # Exception hierarchy
+│   ├── storage/                # Storage adapters
+│   │   ├── protocol.py         # StorageAdapter protocol
+│   │   ├── init_db.sql         # PostgreSQL schema
+│   │   └── adapters/
+│   │       ├── redis_working.py       # WORKING tier (5min TTL)
+│   │       ├── redis_short_term.py    # SHORT_TERM tier (1hr TTL)
+│   │       ├── qdrant_long_term.py    # LONG_TERM tier (vectors)
+│   │       ├── postgres_episodic.py   # EPISODIC tier (events)
+│   │       └── postgres_semantic.py   # SEMANTIC tier (knowledge)
+│   ├── embedding/              # Embedding generation
+│   │   ├── protocol.py         # EmbeddingProvider protocol
+│   │   └── local.py            # Local sentence-transformers
+│   └── cli.py                  # Command-line interface
+├── tests/
+│   ├── unit/                   # Fast, isolated tests (88 tests)
+│   ├── integration/            # Tests with real databases
+│   └── conftest.py             # Pytest configuration
+├── docs/                       # Documentation
+│   └── prompts/                # Development prompts
+├── legacy_code/                # Previous implementation (arch-v1)
+└── pyproject.toml              # Project configuration
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests and quality checks
+5. Commit with clear messages (`git commit -m 'Add amazing feature'`)
+6. Push to your branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+### Code Standards
+
+- **Type hints**: Required on all functions
+- **Docstrings**: Google style on all public interfaces
+- **Tests**: 90%+ coverage, test all error paths
+- **Async**: Use async/await for all I/O
+- **Logging**: Structured logging with structlog
+- **Formatting**: black (line length 100)
+- **Linting**: ruff (strict mode)
+- **Type checking**: mypy (strict mode)
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details
+
+## Acknowledgments
+
+Built with ❤️ by the Konf Dev team for the agentic AI community.
 
 ---
 
-**Ready to give your AI systems perfect memory?** Get started with the [User Guide](./docs/USER_GUIDE.md) or explore the [examples](./examples/).
+**Status**: v2.0 - Production Ready 🚀

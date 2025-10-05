@@ -1,184 +1,83 @@
-[build-system]
-requires = ["setuptools>=64", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "smrti"
-version = "0.1.0"
-description = "Intelligent Multi-Tier Memory System for AI Applications"
+version = "2.0.0"
+description = "Multi-tier memory storage system for agentic AI applications"
+authors = ["Konf Dev <dev@konf.dev>"]
 readme = "README.md"
-license = {text = "Apache-2.0"}
-authors = [
-    {name = "KonfSutra", email = "dev@konf.dev"}
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-]
-requires-python = ">=3.11"
-dependencies = [
-    # Core dependencies
-    "pydantic>=2.7.0",
-    "pydantic-settings>=2.2.0",
-    "typing-extensions>=4.10.0",
-    
-    # Async and concurrency
-    "asyncio-throttle>=1.0.2",
-    "anyio>=4.3.0",
-    
-    # Vector storage and embeddings
-    "chromadb>=0.4.22",
-    "sentence-transformers>=2.5.1",
-    "numpy>=1.24.0",
-    "scikit-learn>=1.4.0",
-    
-    # Redis for working/short-term memory
-    "redis>=5.0.0",
-    "hiredis>=2.3.2",
-    
-    # PostgreSQL for episodic memory
-    "asyncpg>=0.29.0",
-    "sqlalchemy>=2.0.27",
-    "alembic>=1.13.0",
-    
-    # Neo4j for semantic memory
-    "neo4j>=5.17.0",
-    
-    # Graph processing fallback
-    "networkx>=3.2.1",
-    
-    # Lexical search
-    "whoosh>=2.7.4",
-    "rank-bm25>=0.2.2",
-    
-    # Observability
-    "opentelemetry-api>=1.23.0",
-    "opentelemetry-sdk>=1.23.0",
-    "opentelemetry-instrumentation>=0.44b0",
-    "opentelemetry-exporter-otlp>=1.23.0",
-    "prometheus-client>=0.20.0",
-    "structlog>=24.1.0",
-    
-    # Configuration
-    "pyyaml>=6.0.1",
-    "python-dotenv>=1.0.1",
-    
-    # Security and hashing
-    "cryptography>=42.0.0",
-    "bcrypt>=4.1.2",
-    
-    # Text processing and NLP
-    "spacy>=3.7.0",
-    "nltk>=3.8.1",
-    "textstat>=0.7.3",
-    
-    # Utilities
-    "click>=8.1.7",
-    "rich>=13.7.0",
-    "httpx>=0.27.0",
-    "tenacity>=8.2.3",
-    "cachetools>=5.3.2",
-    
-    # JSON and serialization
-    "orjson>=3.9.0",
-    "msgpack>=1.0.7",
-]
+license = "MIT"
+packages = [{include = "smrti", from = "src"}]
 
-[project.optional-dependencies]
-dev = [
-    # Testing
-    "pytest>=8.1.1",
-    "pytest-asyncio>=0.23.5",
-    "pytest-cov>=4.0.0",
-    "pytest-benchmark>=4.0.0",
-    "hypothesis>=6.98.0",
-    "factory-boy>=3.3.0",
-    
-    # Code quality
-    "ruff>=0.3.0",
-    "mypy>=1.9.0",
-    "black>=24.2.0",
-    "isort>=5.13.0",
-    "bandit>=1.7.7",
-    
-    # Documentation
-    "mkdocs>=1.5.3",
-    "mkdocs-material>=9.5.0",
-    "mkdocstrings[python]>=0.24.0",
-    
-    # Development utilities
-    "pre-commit>=3.6.2",
-    "jupyter>=1.0.0",
-    "ipython>=8.22.0",
-]
-docker = [
-    "docker>=7.0.0",
-    # Note: docker-compose CLI is installed separately, not via Python package
-]
-enterprise = [
-    # Enterprise-grade features
-    "openai>=1.12.0",
-    "anthropic>=0.17.0",
-    "cohere>=4.47",
-    "pinecone-client>=3.1.0",
-    "weaviate-client>=4.4.0",
-    "qdrant-client>=1.8.0",
-]
-all = [
-    "smrti[dev,docker,enterprise]"
-]
+[tool.poetry.scripts]
+smrti = "smrti.cli:main"
 
-[project.scripts]
-smrti = "smrti.cli.main:cli"
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.109.0"
+uvicorn = {extras = ["standard"], version = "^0.27.0"}
+redis = "^5.0.1"
+qdrant-client = "^1.7.0"
+asyncpg = "^0.30.0"
+sentence-transformers = "^2.3.0"
+httpx = "^0.26.0"
+pydantic-settings = "^2.1.0"
+structlog = "^24.1.0"
+prometheus-client = "^0.19.0"
+tenacity = "^8.2.3"
+python-multipart = "^0.0.6"
 
-[project.urls]
-Homepage = "https://github.com/konf-dev/smrti"
-Documentation = "https://smrti.konf.dev"
-Repository = "https://github.com/konf-dev/smrti"
-Issues = "https://github.com/konf-dev/smrti/issues"
-Changelog = "https://github.com/konf-dev/smrti/blob/main/CHANGELOG.md"
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.4"
+pytest-asyncio = "^0.23.3"
+pytest-cov = "^4.1.0"
+black = "^23.12.1"
+ruff = "^0.1.11"
+mypy = "^1.8.0"
+fakeredis = "^2.20.1"
+httpx-mock = "^0.10.0"
+types-redis = "^4.6.0.20240106"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["smrti*"]
-exclude = ["tests*"]
-
-[tool.setuptools.package-data]
-smrti = ["py.typed", "**/*.yaml", "**/*.yml", "**/*.json"]
+[tool.black]
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | legacy_code
+  | \.eggs
+  | \.tox
+  | build
+  | dist
+)/
+'''
 
 [tool.ruff]
-target-version = "py311"
 line-length = 100
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
     "F",   # pyflakes
     "I",   # isort
+    "C",   # flake8-comprehensions
     "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
     "UP",  # pyupgrade
-    "ARG", # flake8-unused-arguments
-    "SIM", # flake8-simplify
-    "TCH", # flake8-type-checking
-    "PTH", # flake8-use-pathlib
 ]
 ignore = [
-    "E501",  # line too long, handled by black
+    "E501",  # line too long (handled by black)
     "B008",  # do not perform function calls in argument defaults
-    "B905",  # zip without explicit strict parameter
+    "C901",  # too complex
+]
+exclude = [
+    ".git",
+    ".venv",
+    "legacy_code",
+    "__pycache__",
+    "*.egg-info",
 ]
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
-"tests/**/*" = ["ARG", "S101", "S106"]
 
 [tool.mypy]
 python_version = "3.11"
@@ -186,6 +85,9 @@ strict = true
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+disallow_any_generics = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
 disallow_incomplete_defs = true
 check_untyped_defs = true
 disallow_untyped_decorators = true
@@ -193,51 +95,38 @@ no_implicit_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_no_return = true
-warn_unreachable = true
-strict_equality = true
+follow_imports = "normal"
+ignore_missing_imports = false
+exclude = ['legacy_code/']
 
 [[tool.mypy.overrides]]
 module = [
-    "chromadb.*",
+    "redis.*",
+    "qdrant_client.*",
     "sentence_transformers.*",
-    "whoosh.*",
-    "rank_bm25.*",
-    "neo4j.*",
-    "networkx.*",
-    "spacy.*",
-    "nltk.*",
+    "prometheus_client.*",
 ]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-minversion = "8.0"
-addopts = [
-    "--strict-config",
-    "--strict-markers",
-    "--disable-warnings",
-    "--cov=smrti",
-    "--cov-report=term-missing",
-    "--cov-report=html",
-    "--cov-report=xml",
-]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --cov=src --cov-report=term-missing --cov-report=html"
 testpaths = ["tests"]
-markers = [
-    "unit: Unit tests",
-    "integration: Integration tests",
-    "adapter: Adapter contract tests",
-    "benchmark: Performance benchmarks",
-    "chaos: Chaos engineering tests",
-    "security: Security tests",
-    "slow: Slow running tests",
-]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 asyncio_mode = "auto"
+markers = [
+    "unit: Unit tests (fast, isolated)",
+    "integration: Integration tests (require databases)",
+    "e2e: End-to-end tests (full stack)",
+]
 
 [tool.coverage.run]
-source = ["smrti"]
+source = ["src"]
 omit = [
-    "smrti/cli/*",
-    "smrti/testing/*",
-    "tests/*",
+    "*/tests/*",
+    "*/__init__.py",
 ]
 
 [tool.coverage.report]
@@ -248,47 +137,10 @@ exclude_lines = [
     "raise NotImplementedError",
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
 ]
 
-[tool.black]
-line-length = 100
-target-version = ['py311', 'py312', 'py313']
-include = '\.pyi?$'
-extend-exclude = '''
-/(
-  # directories
-  \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | build
-  | dist
-)/
-'''
-
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-line_length = 100
-known_first_party = ["smrti"]
-known_third_party = [
-    "chromadb",
-    "sentence_transformers",
-    "redis",
-    "neo4j",
-    "asyncpg",
-    "sqlalchemy",
-    "whoosh",
-    "opentelemetry",
-    "prometheus_client",
-    "pydantic",
-    "structlog",
-    "click",
-    "rich",
-]
-
-[tool.bandit]
-exclude_dirs = ["tests", "contrib"]
-skips = ["B101", "B601"]
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

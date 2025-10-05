@@ -1,23 +1,25 @@
-# Git
-.git
-.gitignore
-
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
+*.py[cod]
+*$py.class
 *.so
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.cache
-.mypy_cache/
-*.egg-info/
+.Python
 build/
+develop-eggs/
 dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
 # Virtual environments
 .env
@@ -28,6 +30,14 @@ ENV/
 env.bak/
 venv.bak/
 
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
 # IDEs
 .vscode/
 .idea/
@@ -37,47 +47,23 @@ venv.bak/
 
 # OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# Documentation
-docs/_build/
-site/
-
-# Test artifacts
-test-results/
-.pytest_cache/
-coverage.xml
-
-# Logs
-logs/
-*.log
-
-# Temporary files
-tmp/
-temp/
-.tmp
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-
-# Docker
+# Project specific
+legacy_code/arch-v1/tests/
+legacy_code/arch-v1/docs/
+legacy_code/arch-v1/examples/
+legacy_code/arch-v1/showcase/
+docs/
+tests/
+*.md
+!README.md
+.git/
+.gitignore
+docker-compose.yml
+docker-compose.dev.yml
 Dockerfile
-docker-compose*.yml
 .dockerignore
 
-# Development tools
-.pre-commit-config.yaml
-.github/
-Makefile
-
-# Data directories (exclude from image, mount as volumes)
-data/
-chroma_db/
-redis_data/
+# Logs
+*.log

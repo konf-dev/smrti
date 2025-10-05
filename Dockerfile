@@ -1,111 +1,74 @@
-# ==============================================================================
-# SMRTI - Intelligent Multi-Tier Memory System
-# Production-ready Docker image with multi-stage builds
-# ==============================================================================
+# Multi-stage build for Smrti API server
 
-FROM python:3.13-slim as base
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+# Stage 1: Builder
+FROM python:3.11-slim AS builder
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
     gcc \
     g++ \
-    git \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create app user for security
-RUN useradd --create-home --shell /bin/bash smrti
-
-# ==============================================================================
-# DEVELOPMENT STAGE
-# ==============================================================================
-FROM base as development
-
-# Install development dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
     make \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Set work directory
+# Set working directory
 WORKDIR /app
 
-# Copy requirements and install Python dependencies
-COPY pyproject.toml requirements.txt ./
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install -e .[dev,docker]
+# Copy dependency file
+COPY pyproject.toml ./
+
+# Extract and install main dependencies using pip
+RUN pip install --no-cache-dir \
+    fastapi==0.109.0 \
+    uvicorn[standard]==0.27.0 \
+    redis==5.0.1 \
+    qdrant-client==1.7.0 \
+    asyncpg==0.30.0 \
+    sentence-transformers==2.3.0 \
+    httpx==0.26.0 \
+    pydantic-settings==2.1.0 \
+    structlog==24.1.0 \
+    prometheus-client==0.19.0 \
+    tenacity==8.2.3 \
+    python-multipart==0.0.6
+
+# Stage 2: Runtime
+FROM python:3.11-slim
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -u 1000 smrti && \
+    mkdir -p /app/.cache && \
+    chown -R smrti:smrti /app
+
+# Set working directory
+WORKDIR /app
+
+# Copy Python dependencies from builder
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy application code
-COPY . .
+COPY --chown=smrti:smrti ./src/smrti/ /app/smrti/
+COPY --chown=smrti:smrti ./pyproject.toml /app/
 
-# Create necessary directories
-RUN mkdir -p /app/logs /app/data/chroma && \
-    chown -R smrti:smrti /app
-
-# Switch to app user
+# Switch to non-root user
 USER smrti
 
-# Expose ports
-EXPOSE 8000 9090
+# Expose API port
+EXPOSE 8000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Default command
-CMD ["python", "-m", "smrti.api.server"]
+# Set Python path
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
 
-# ==============================================================================
-# PRODUCTION STAGE
-# ==============================================================================
-FROM base as production
-
-# Set work directory
-WORKDIR /app
-
-# Copy requirements and install Python dependencies (production only)
-COPY pyproject.toml requirements.txt ./
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install .
-
-# Copy only necessary application files
-COPY smrti/ ./smrti/
-COPY config.json ./
-
-# Create necessary directories
-RUN mkdir -p /app/logs /app/data/chroma && \
-    chown -R smrti:smrti /app
-
-# Switch to app user
-USER smrti
-
-# Expose ports
-EXPOSE 8000 9090
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
-
-# Production command with gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "smrti.api.server:app"]
-
-# ==============================================================================
-# TESTING STAGE  
-# ==============================================================================
-FROM development as testing
-
-# Install additional test dependencies
-RUN pip install pytest-xdist pytest-mock
-
-# Copy test files
-COPY tests/ ./tests/
-COPY test_*.py ./
-
-# Run tests by default
-CMD ["pytest", "-v", "--cov=smrti", "--cov-report=html", "--cov-report=term-missing"]
+# Run the application
+CMD ["python", "-m", "uvicorn", "smrti.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

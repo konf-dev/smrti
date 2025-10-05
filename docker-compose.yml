@@ -1,312 +1,191 @@
-version: '3.8'
-
 services:
-  # ==============================================================================
-  # SMRTI CORE APPLICATION
-  # ==============================================================================
-  
-  smrti-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: smrti-app
-    ports:
-      - "8000:8000"  # Main API
-      - "9090:9090"  # Metrics endpoint
-    environment:
-      # Smrti Configuration
-      SMRTI_LOG_LEVEL: info
-      SMRTI_FEATURE_ENABLE_RERANK: "true"
-      SMRTI_CONTEXT_DEFAULT_BUDGET: 8000
-      
-      # Storage Backends
-      SMRTI_TIER_WORKING_BACKEND: redis
-      SMRTI_TIER_SHORT_TERM_BACKEND: redis
-      SMRTI_TIER_LONG_TERM_BACKEND: chroma
-      SMRTI_TIER_EPISODIC_BACKEND: postgres
-      SMRTI_TIER_SEMANTIC_BACKEND: neo4j
-      
-      # Database Connections
-      REDIS_URL: redis://redis:6379/0
-      POSTGRES_URL: postgresql://smrti:smrti_password@postgres:5432/smrti
-      NEO4J_URI: bolt://neo4j:7687
-      NEO4J_USER: neo4j
-      NEO4J_PASSWORD: smrti_password
-      
-      # Vector Storage
-      CHROMA_HOST: chroma
-      CHROMA_PORT: 8000
-      CHROMA_PERSIST_DIRECTORY: /data/chroma
-      
-      # Observability
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:14268/api/traces
-      PROMETHEUS_ENDPOINT: http://prometheus:9090
-      
-    volumes:
-      - ./data/chroma:/data/chroma
-      - ./logs:/app/logs
-    depends_on:
-      - redis
-      - postgres
-      - neo4j
-      - chroma
-      - prometheus
-      - jaeger
-    networks:
-      - smrti-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # ==============================================================================
-  # MEMORY TIER STORAGE BACKENDS
-  # ==============================================================================
-
-  # Redis - Working Memory & Short-term Memory
+  # Redis - In-memory storage for WORKING and SHORT_TERM tiers
   redis:
-    image: redis:7.2-alpine
+    image: redis:7-alpine
     container_name: smrti-redis
     ports:
       - "6379:6379"
-    command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     volumes:
-      - redis-data:/data
-    networks:
-      - smrti-network
-    restart: unless-stopped
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
-      retries: 3
-
-  # ChromaDB - Vector Storage for Long-term Memory
-  chroma:
-    image: chromadb/chroma:latest
-    container_name: smrti-chroma
-    ports:
-      - "8001:8000"  # Expose on different port to avoid conflicts
-    environment:
-      CHROMA_SERVER_HOST: 0.0.0.0
-      CHROMA_SERVER_HTTP_PORT: 8000
-      PERSIST_DIRECTORY: /chroma/chroma
-      ANONYMIZED_TELEMETRY: false
-      ALLOW_RESET: true
-    volumes:
-      - chroma-data:/chroma/chroma
+      retries: 5
     networks:
       - smrti-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "timeout 2 bash -c '</dev/tcp/localhost/8000' || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
-  # PostgreSQL - Episodic Memory
+  # Qdrant - Vector database for LONG_TERM semantic memory
+  qdrant:
+    image: qdrant/qdrant:v1.7.4
+    container_name: smrti-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 5 bash -c '</dev/tcp/localhost/6333' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - smrti-network
+    restart: unless-stopped
+
+  # PostgreSQL - Relational database for EPISODIC and SEMANTIC tiers
   postgres:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     container_name: smrti-postgres
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: smrti
-      POSTGRES_USER: smrti
-      POSTGRES_PASSWORD: smrti_password
-      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+      - POSTGRES_USER=smrti
+      - POSTGRES_PASSWORD=smrti
+      - POSTGRES_DB=smrti
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=en_US.UTF-8
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./docker/postgres/init:/docker-entrypoint-initdb.d
-    networks:
-      - smrti-network
-    restart: unless-stopped
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/smrti/storage/init_db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U smrti -d smrti"]
       interval: 10s
       timeout: 5s
       retries: 5
-
-  # Neo4j - Knowledge Graph for Semantic Memory
-  neo4j:
-    image: neo4j:5.13.0
-    container_name: smrti-neo4j
-    ports:
-      - "7474:7474"  # HTTP
-      - "7687:7687"  # Bolt
-    environment:
-      NEO4J_AUTH: neo4j/smrti_password
-      NEO4J_dbms_memory_pagecache_size: 512M
-      NEO4J_dbms_memory_heap_initial__size: 512M
-      NEO4J_dbms_memory_heap_max__size: 1G
-      NEO4J_apoc_export_file_enabled: true
-      NEO4J_apoc_import_file_enabled: true
-      NEO4J_apoc_import_file_use__neo4j__config: true
-      NEO4JLABS_PLUGINS: '["apoc"]'
-    volumes:
-      - neo4j-data:/data
-      - neo4j-logs:/logs
-      - neo4j-import:/var/lib/neo4j/import
-      - neo4j-plugins:/plugins
     networks:
       - smrti-network
     restart: unless-stopped
+
+  # Smrti API - FastAPI application
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smrti-api
+    ports:
+      - "8000:8000"
+    environment:
+      # Server
+      - HOST=0.0.0.0
+      - PORT=8000
+      - WORKERS=4
+      - LOG_LEVEL=INFO
+      
+      # API
+      - API_VERSION=2.0.0
+      - API_KEYS=${API_KEYS:-dev-key-123,test-key-456}
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      
+      # Redis
+      - REDIS_URL=redis://redis:6379/0
+      
+      # Qdrant
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - QDRANT_COLLECTION_PREFIX=smrti_
+      - QDRANT_VECTOR_SIZE=384
+      
+      # PostgreSQL
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=smrti
+      - POSTGRES_USER=smrti
+      - POSTGRES_PASSWORD=smrti
+      - POSTGRES_MIN_POOL_SIZE=5
+      - POSTGRES_MAX_POOL_SIZE=20
+      
+      # Embedding
+      - EMBEDDING_PROVIDER=local
+      - EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+      - EMBEDDING_CACHE_SIZE=10000
+      - EMBEDDING_BATCH_SIZE=32
+      
+      # Validation
+      - MAX_TEXT_LENGTH=50000
+      - MAX_METADATA_SIZE=10240
+    volumes:
+      - ./src:/app/src:ro
+      - embedding_cache:/app/.cache
+    depends_on:
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "timeout 2 bash -c '</dev/tcp/localhost/7687' || exit 1"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 40s
+      retries: 3
+      start_period: 60s
+    networks:
+      - smrti-network
+    restart: unless-stopped
 
-  # ==============================================================================
-  # OBSERVABILITY STACK
-  # ==============================================================================
-
-  # Prometheus - Metrics Collection
+  # Prometheus - Metrics collection (optional)
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.48.0
     container_name: smrti-prometheus
     ports:
       - "9090:9090"
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--web.enable-lifecycle'
-      - '--web.enable-admin-api'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
     volumes:
-      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus-data:/prometheus
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
     networks:
       - smrti-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    profiles:
+      - monitoring
 
-  # Grafana - Metrics Visualization
+  # Grafana - Metrics visualization (optional)
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.2.2
     container_name: smrti-grafana
     ports:
       - "3000:3000"
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: smrti_password
-      GF_USERS_ALLOW_SIGN_UP: false
-      GF_INSTALL_PLUGINS: grafana-piechart-panel
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
-      - grafana-data:/var/lib/grafana
-      - ./docker/grafana/provisioning:/etc/grafana/provisioning
-      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards
-    networks:
-      - smrti-network
-    restart: unless-stopped
+      - ./docker/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./docker/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - grafana_data:/var/lib/grafana
     depends_on:
       - prometheus
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Jaeger - Distributed Tracing
-  jaeger:
-    image: jaegertracing/all-in-one:1.51
-    container_name: smrti-jaeger
-    ports:
-      - "5775:5775/udp"
-      - "6831:6831/udp"
-      - "6832:6832/udp"
-      - "5778:5778"
-      - "16686:16686"  # UI
-      - "14268:14268"
-      - "14250:14250"
-      - "9411:9411"
-    environment:
-      COLLECTOR_ZIPKIN_HOST_PORT: :9411
-      SPAN_STORAGE_TYPE: memory
     networks:
       - smrti-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:16686/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-
-  # ==============================================================================
-  # DEVELOPMENT & TESTING TOOLS
-  # ==============================================================================
-
-  # Redis Commander - Redis GUI
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    container_name: smrti-redis-gui
-    ports:
-      - "8081:8081"
-    environment:
-      REDIS_HOSTS: local:redis:6379
-    networks:
-      - smrti-network
-    depends_on:
-      - redis
-    restart: unless-stopped
-    profiles: ["dev", "tools"]
-
-  # pgAdmin - PostgreSQL GUI
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: smrti-pgadmin
-    ports:
-      - "8082:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@smrti.dev
-      PGADMIN_DEFAULT_PASSWORD: smrti_password
-      PGADMIN_DISABLE_POSTFIX: true
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
-    networks:
-      - smrti-network
-    depends_on:
-      - postgres
-    restart: unless-stopped
-    profiles: ["dev", "tools"]
-
-# ==============================================================================
-# NETWORKS & VOLUMES
-# ==============================================================================
+    profiles:
+      - monitoring
 
 networks:
   smrti-network:
+    name: smrti-network
     driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.20.0.0/16
 
 volumes:
-  # Storage volumes
-  redis-data:
-  chroma-data:
-  postgres-data:
-  neo4j-data:
-  neo4j-logs:
-  neo4j-conf:
-  neo4j-import:
-  neo4j-plugins:
-  
-  # Observability volumes  
-  prometheus-data:
-  grafana-data:
-  jaeger-data:
-  
-  # Development tool volumes
-  pgadmin-data:
+  redis_data:
+    name: smrti-redis-data
+  qdrant_data:
+    name: smrti-qdrant-data
+  postgres_data:
+    name: smrti-postgres-data
+  embedding_cache:
+    name: smrti-embedding-cache
+  prometheus_data:
+    name: smrti-prometheus-data
+  grafana_data:
+    name: smrti-grafana-data

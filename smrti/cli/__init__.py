@@ -1,1 +1,0 @@
-"""Smrti CLI - Dev kit commands."""
