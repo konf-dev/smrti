@@ -1,6 +1,8 @@
 """Configuration management using Pydantic Settings."""
 
 from typing import Literal
+import os
+from urllib.parse import urlparse
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -195,4 +197,41 @@ def get_settings() -> Settings:
     global _settings
     if _settings is None:
         _settings = Settings()
+        # Prefer central SMRTI_* variables if present (shared infra)
+        redis_url_env = os.environ.get("SMRTI_REDIS_URL")
+        if redis_url_env:
+            _settings.redis_url = redis_url_env
+
+        pg_dsn_env = os.environ.get("SMRTI_DATABASE_URL")
+        if pg_dsn_env:
+            _settings.postgres_url = pg_dsn_env
+            # Attempt to parse discrete parts (optional)
+            try:
+                parsed = urlparse(pg_dsn_env)
+                if parsed.hostname:
+                    _settings.postgres_host = parsed.hostname
+                if parsed.port:
+                    _settings.postgres_port = parsed.port  # type: ignore[assignment]
+                if parsed.path and len(parsed.path) > 1:
+                    _settings.postgres_database = parsed.path.lstrip("/")
+                if parsed.username:
+                    _settings.postgres_user = parsed.username
+                if parsed.password:
+                    _settings.postgres_password = parsed.password
+            except Exception:
+                # Non-fatal; pool creation will use DSN directly
+                pass
+
+        qdrant_url_env = os.environ.get("SMRTI_QDRANT_URL")
+        if qdrant_url_env:
+            _settings.qdrant_url = qdrant_url_env
+            # Optionally parse host/port for compatibility
+            try:
+                q = urlparse(qdrant_url_env)
+                if q.hostname:
+                    _settings.qdrant_host = q.hostname
+                if q.port:
+                    _settings.qdrant_port = q.port  # type: ignore[assignment]
+            except Exception:
+                pass
     return _settings

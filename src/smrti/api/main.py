@@ -2,12 +2,14 @@
 
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
+import os
+from urllib.parse import urlparse
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import make_asgi_app
 import redis.asyncio as redis
-from qdrant_client import QdrantClient
+from qdrant_client import AsyncQdrantClient
 import asyncpg
 
 from smrti.api.routes import health, memory
@@ -42,38 +44,70 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     pg_pool = None
     
     try:
-        # Redis connection
-        logger.info("connecting_to_redis", url=settings.redis_url)
-        redis_client = redis.from_url(
-            settings.redis_url,
+        # Redis connection (sanitize URL credentials; use REDIS_PASSWORD if provided)
+        raw_redis_url = settings.redis_url
+        parsed_redis = urlparse(raw_redis_url)
+        # Derive connection params safely
+        redis_host = parsed_redis.hostname or "redis"
+        redis_port = parsed_redis.port or 6379
+        # DB from path, default 0 if missing
+        try:
+            redis_db = int((parsed_redis.path or "/0").lstrip("/"))
+        except ValueError:
+            redis_db = 0
+        redis_password = os.environ.get("REDIS_PASSWORD") or (parsed_redis.password or None)
+        logger.info(
+            "connecting_to_redis",
+            url=f"redis://***@{redis_host}:{redis_port}/{redis_db}" if redis_password else f"redis://{redis_host}:{redis_port}/{redis_db}",
+        )
+        redis_client = redis.Redis(
+            host=redis_host,
+            port=redis_port,
+            db=redis_db,
+            password=redis_password,
             encoding="utf-8",
             decode_responses=True,
-            max_connections=50
+            max_connections=50,
         )
         await redis_client.ping()
         logger.info("redis_connected")
         
-        # Qdrant connection
-        logger.info("connecting_to_qdrant", host=settings.qdrant_host)
-        qdrant_client = QdrantClient(
-            host=settings.qdrant_host,
-            port=settings.qdrant_port,
-            timeout=30.0
-        )
+        # Qdrant connection (prefer URL if provided)
+        if settings.qdrant_url:
+            logger.info("connecting_to_qdrant", url=settings.qdrant_url)
+            qdrant_client = AsyncQdrantClient(url=settings.qdrant_url, timeout=30.0)
+        else:
+            logger.info("connecting_to_qdrant", host=settings.qdrant_host)
+            qdrant_client = AsyncQdrantClient(
+                host=settings.qdrant_host,
+                port=settings.qdrant_port,
+                timeout=30.0
+            )
         logger.info("qdrant_connected")
         
         # PostgreSQL connection pool
         logger.info("connecting_to_postgres", host=settings.postgres_host)
-        pg_pool = await asyncpg.create_pool(
-            host=settings.postgres_host,
-            port=settings.postgres_port,
-            database=settings.postgres_database,
-            user=settings.postgres_user,
-            password=settings.postgres_password,
-            min_size=5,
-            max_size=20,
-            timeout=30.0
-        )
+        # PostgreSQL connection pool (prefer DSN if provided)
+        if settings.postgres_url:
+            logger.info("connecting_to_postgres", dsn="***")
+            pg_pool = await asyncpg.create_pool(
+                dsn=settings.postgres_url,
+                min_size=settings.postgres_min_pool_size,
+                max_size=settings.postgres_max_pool_size,
+                timeout=30.0,
+            )
+        else:
+            logger.info("connecting_to_postgres", host=settings.postgres_host)
+            pg_pool = await asyncpg.create_pool(
+                host=settings.postgres_host,
+                port=settings.postgres_port,
+                database=settings.postgres_database,
+                user=settings.postgres_user,
+                password=settings.postgres_password,
+                min_size=settings.postgres_min_pool_size,
+                max_size=settings.postgres_max_pool_size,
+                timeout=30.0
+            )
         logger.info("postgres_connected")
         
         # Initialize embedding provider

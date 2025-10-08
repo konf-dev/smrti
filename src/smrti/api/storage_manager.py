@@ -193,14 +193,23 @@ class StorageManager:
         adapter = self._get_adapter(memory_type)
         
         try:
-            # For LONG_TERM memories with embeddings, use semantic search
-            # For other tiers, use simple retrieve
-            results = await adapter.retrieve(
-                namespace=namespace,
-                query=query,
-                filters={} if not query_embedding else {"_has_embedding": True},
-                limit=limit
-            )
+            # Different adapters have different signatures
+            if memory_type in [MemoryType.LONG_TERM.value, MemoryType.EPISODIC.value, MemoryType.SEMANTIC.value]:
+                # These adapters use (namespace, query_embedding, text_query, limit, ...)
+                results = await adapter.retrieve(
+                    namespace=namespace,
+                    query_embedding=query_embedding,
+                    text_query=query,
+                    limit=limit
+                )
+            else:
+                # WORKING and SHORT_TERM use (namespace, query, filters, limit)
+                results = await adapter.retrieve(
+                    namespace=namespace,
+                    query=query,
+                    filters=filters or {},
+                    limit=limit
+                )
             
             logger.info(
                 "memories_retrieved",
