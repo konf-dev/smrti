@@ -229,11 +229,15 @@ class PostgresSemanticAdapter:
             # Format results
             results = []
             for row in rows:
+                # Parse data JSON
+                data = json.loads(row["data"]) if isinstance(row["data"], str) else row["data"]
+                
                 memory = {
                     "memory_id": str(row["memory_id"]),
                     "namespace": row["namespace"],
                     "memory_type": row["memory_type"],
-                    "data": json.loads(row["data"]) if isinstance(row["data"], str) else row["data"],
+                    "text": data.get("text") if data else row["text"],  # Extract text from data or fallback to text column
+                    "data": data,
                     "metadata": json.loads(row["metadata"]) if isinstance(row["metadata"], str) else row["metadata"],
                     "entities": json.loads(row["entities"]) if isinstance(row["entities"], str) else row["entities"],
                     "relationships": json.loads(row["relationships"]) if isinstance(row["relationships"], str) else row["relationships"],

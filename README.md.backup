@@ -394,17 +394,3 @@ Comprehensive documentation is available in the [`docs/`](docs/) directory:
 
 See the [Documentation Index](docs/README.md) for complete navigation.
 
-
-## 📚 Documentation
-
-Comprehensive documentation is available in the [`docs/`](docs/) directory:
-
-- **[User Docs](docs/user/)** - Quickstart guides and how-tos
-- **[Developer Docs](docs/developer/)** - Contributing and development setup
-- **[Operator Docs](docs/operator/)** - Deployment and operations
-- **[Reference Docs](docs/reference/)** - API and configuration reference
-- **[Design Docs](docs/design/)** - Architecture and design decisions
-- **[Integration Docs](docs/integration/)** - Service integration guides
-
-See the [Documentation Index](docs/README.md) for complete navigation.
-
