@@ -1,0 +1,35 @@
+# Rust
+target/
+Cargo.lock
+
+# Python (for future PyO3 bindings)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Linting
+.ruff_cache/
+.mypy_cache/
+
+# Environment
+.env
+.env.local
+
+# MkDocs
+site/

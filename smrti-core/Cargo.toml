@@ -1,0 +1,52 @@
+[package]
+name = "smrti-core"
+version = "0.1.0"
+edition = "2021"
+description = "Graph-based memory for AI agents — storage engine"
+license = "MIT"
+repository = "https://github.com/konf-dev/smrti"
+keywords = ["ai", "agents", "memory", "graph", "pgvector"]
+categories = ["database", "asynchronous"]
+
+[features]
+default = []
+telemetry = ["tracing-opentelemetry", "opentelemetry", "opentelemetry-otlp"]
+
+[dependencies]
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+schemars = "0.8"
+
+# Validation & config
+validator = { version = "0.18", features = ["derive"] }
+typed-builder = "0.20"
+figment = { version = "0.10", features = ["toml", "env", "json"] }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
+
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio", "postgres", "uuid", "chrono", "json"] }
+pgvector = { version = "0.4", features = ["sqlx"] }
+
+# Types
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Errors
+thiserror = "2"
+
+# Telemetry (always available for tracing macros, OTEL export is feature-gated)
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Optional: OTEL export
+tracing-opentelemetry = { version = "0.27", optional = true }
+opentelemetry = { version = "0.27", optional = true }
+opentelemetry-otlp = { version = "0.27", optional = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full", "test-util"] }
+testcontainers = "0.23"

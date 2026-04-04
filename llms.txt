@@ -1,0 +1,110 @@
+# smrti
+
+> Graph-based memory for AI agents, built on PostgreSQL + pgvector.
+
+## Overview
+
+smrti is a Rust library that provides graph-based storage and retrieval for AI agent memory. It is a dumb storage layer — no built-in LLM calls or embedding generation. Callers provide pre-computed data. Event-sourced, multi-tenant, fully configurable.
+
+Three distribution targets:
+- **smrti-core** (Rust crate): `cargo add smrti-core`
+- **smrti** (Python package via PyO3, planned): `pip install smrti`
+- **konf-smrti** (Konflux integration, planned): in-process workflow tools
+
+Two API layers:
+- **Memory** (Layer 1): flat params, string IDs, JSON returns with `_meta`
+- **StorageProvider** (Layer 2): typed params, UUID, Rust structs
+
+## Install
+
+```toml
+[dependencies]
+smrti-core = "0.1"
+```
+
+Requires PostgreSQL 15+ with pgvector extension.
+
+## Memory API (Layer 1 — LLM-friendly)
+
+```rust
+// Lifecycle
+Memory::connect(config) -> Result<Memory>
+memory.close() -> Result<()>
+
+// Write (batch transactions — single commit per call)
+memory.add_nodes(nodes, namespace) -> Result<Value>     // with optional embedding + model_name
+memory.add_edges(edges, namespace) -> Result<Value>
+memory.get_or_create(content, node_type, node_key, namespace) -> Result<Value>
+memory.update_node(node_id, content, metadata, node_type) -> Result<Value>
+memory.retract_node(node_id) -> Result<Value>
+memory.retract_edge(edge_id) -> Result<Value>
+memory.merge_nodes(keep_id, remove_id) -> Result<Value>
+
+// Search (three modes: vector, text, hybrid)
+memory.search(query_vector, text_query, namespaces, mode, ...) -> Result<Value>
+memory.traverse(node_id, depth, edge_types, max_nodes) -> Result<Value>
+memory.aggregate(edge_type, namespace, metadata_key, ...) -> Result<Value>
+memory.get_edges(node_id, direction, edge_types) -> Result<Value>
+
+// Session State (working memory, NOT event-sourced)
+memory.state_set(key, value, session_id, namespace, ttl_seconds) -> Result<Value>
+memory.state_get(key, session_id, namespace) -> Result<Value>
+memory.state_delete(key, session_id, namespace) -> Result<Value>
+memory.state_clear(session_id, namespace) -> Result<Value>
+memory.state_list(session_id, namespace) -> Result<Value>
+memory.state_prune_expired(namespace) -> Result<Value>
+
+// Import/Export
+memory.export_events(after_id, namespace, limit) -> Result<Value>
+memory.import_events(events) -> Result<Value>
+
+// GDPR
+memory.purge_namespace(namespace) -> Result<Value>
+
+// Scoped context
+memory.scoped(namespace) -> ScopedMemory
+```
+
+All returns include `_meta` with operational info (duration_ms, event_ids, search_modes_used, etc.).
+
+## Search Modes
+
+- `mode="vector"` — cosine similarity via pgvector (requires query_vector)
+- `mode="text"` — PostgreSQL full-text search with trigram fallback (requires text_query)
+- `mode="hybrid"` — both, merged with Reciprocal Rank Fusion (requires both)
+
+## Configuration (SmrtiConfig)
+
+Key fields (all have defaults):
+- `dsn` (required): PostgreSQL connection string
+- `search_mode`: "hybrid" | "vector" | "text" (default: "hybrid")
+- `search_language`: PostgreSQL text search config (default: "english")
+- `search_limit`: default max results (default: 10)
+- `distance_metric`: "cosine" | "l2" | "inner_product" (default: "cosine")
+- `rrf_k`: RRF fusion constant (default: 60)
+- `hnsw_m`: HNSW index connections (default: 16)
+- `hnsw_ef_construction`: HNSW build quality (default: 64)
+- `text_search_trigram_fallback`: enable trigram fallback (default: true)
+- `session_state_default_ttl`: default TTL for session state (default: none)
+
+## Concepts
+
+- **Nodes**: entities/facts with content, type, metadata, optional embeddings
+- **Edges**: typed directed relationships with temporal validity. NOT unique by (source, target, type) — multiple edges of same type allowed (A1 principle).
+- **Events**: append-only log. Source of truth. Nodes/edges are projections.
+- **Namespaces**: tenant isolation on all operations.
+- **Session State**: ephemeral KV store per session. NOT event-sourced.
+
+## Error Handling
+
+All errors include context. Types: SmrtiError (Connection, Migration, Event, NodeNotFound, EdgeNotFound, Validation, Search, Embedding, Namespace, Database).
+
+## Production Features
+
+- All SQL uses parameterized `.bind()` — zero string interpolation
+- Batch transactions via `apply_events_batch` — single commit per bulk write
+- Recursive CTE for graph traversal — single query, no round-trips
+- Advisory locking for atomic get_or_create
+- Configurable trigram fallback for high-volume deployments
+- GDPR purge with audit trail
+- OpenTelemetry via feature flag (tracing crate)
