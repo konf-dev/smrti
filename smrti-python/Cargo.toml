@@ -1,0 +1,18 @@
+[package]
+name = "smrti-python"
+version = "0.1.0"
+edition = "2021"
+description = "Python bindings for smrti — graph-based memory for AI agents"
+license = "MIT"
+publish = false
+
+[lib]
+name = "smrti"
+crate-type = ["cdylib"]
+
+[dependencies]
+smrti-core = { path = "../smrti-core" }
+pyo3 = { version = "0.22", features = ["extension-module"] }
+pythonize = "0.22"
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
