@@ -35,12 +35,19 @@ def pg_dsn():
     # Start pgvector container
     subprocess.run(
         [
-            "docker", "run", "-d",
-            "--name", container_name,
-            "-e", "POSTGRES_USER=test",
-            "-e", "POSTGRES_PASSWORD=test",
-            "-e", "POSTGRES_DB=smrti_test",
-            "-p", "15432:5432",
+            "docker",
+            "run",
+            "-d",
+            "--name",
+            container_name,
+            "-e",
+            "POSTGRES_USER=test",
+            "-e",
+            "POSTGRES_PASSWORD=test",
+            "-e",
+            "POSTGRES_DB=smrti_test",
+            "-p",
+            "15432:5432",
             "pgvector/pgvector:pg17",
         ],
         check=True,
@@ -82,10 +89,12 @@ class TestImport:
 
     def test_import_memory(self):
         from smrti import Memory
+
         assert Memory is not None
 
     def test_memory_has_methods(self):
         from smrti import Memory
+
         methods = [m for m in dir(Memory) if not m.startswith("_")]
         assert "connect" in methods
         assert "add_nodes" in methods
@@ -98,23 +107,27 @@ class TestNodeCRUD:
     """Test basic node operations through Python."""
 
     def test_add_nodes(self, memory):
-        result = memory.add_nodes([
-            {"node_type": "person", "content": "Alice is an engineer"},
-        ])
+        result = memory.add_nodes(
+            [
+                {"node_type": "person", "content": "Alice is an engineer"},
+            ]
+        )
         assert "node_ids" in result
         assert len(result["node_ids"]) == 1
         assert "_meta" in result
         assert result["_meta"]["count"] == 1
 
     def test_add_nodes_with_embedding(self, memory):
-        result = memory.add_nodes([
-            {
-                "node_type": "person",
-                "content": "Bob works at Acme",
-                "embedding": [1.0, 0.0, 0.0],
-                "model_name": "test-model",
-            },
-        ])
+        result = memory.add_nodes(
+            [
+                {
+                    "node_type": "person",
+                    "content": "Bob works at Acme",
+                    "embedding": [1.0, 0.0, 0.0],
+                    "model_name": "test-model",
+                },
+            ]
+        )
         assert len(result["node_ids"]) == 1
 
     def test_get_or_create(self, memory):
@@ -131,32 +144,44 @@ class TestEdges:
     """Test edge operations."""
 
     def test_add_edges(self, memory):
-        nodes = memory.add_nodes([
-            {"node_type": "person", "content": "Dave"},
-            {"node_type": "person", "content": "Eve"},
-        ])
+        nodes = memory.add_nodes(
+            [
+                {"node_type": "person", "content": "Dave"},
+                {"node_type": "person", "content": "Eve"},
+            ]
+        )
         n1, n2 = nodes["node_ids"]
 
-        result = memory.add_edges([{
-            "source_node_id": n1,
-            "target_node_id": n2,
-            "edge_type": "KNOWS",
-        }])
+        result = memory.add_edges(
+            [
+                {
+                    "source_node_id": n1,
+                    "target_node_id": n2,
+                    "edge_type": "KNOWS",
+                }
+            ]
+        )
         assert len(result["edge_ids"]) == 1
         assert "_meta" in result
 
     def test_get_edges(self, memory):
-        nodes = memory.add_nodes([
-            {"node_type": "x", "content": "F"},
-            {"node_type": "x", "content": "G"},
-        ])
+        nodes = memory.add_nodes(
+            [
+                {"node_type": "x", "content": "F"},
+                {"node_type": "x", "content": "G"},
+            ]
+        )
         n1, n2 = nodes["node_ids"]
 
-        memory.add_edges([{
-            "source_node_id": n1,
-            "target_node_id": n2,
-            "edge_type": "NEXT",
-        }])
+        memory.add_edges(
+            [
+                {
+                    "source_node_id": n1,
+                    "target_node_id": n2,
+                    "edge_type": "NEXT",
+                }
+            ]
+        )
 
         result = memory.get_edges(n1, direction="outgoing")
         assert len(result["edges"]) >= 1
@@ -166,20 +191,22 @@ class TestSearch:
     """Test search operations."""
 
     def test_vector_search(self, memory):
-        memory.add_nodes([
-            {
-                "node_type": "fact",
-                "content": "cats are fluffy",
-                "embedding": [1.0, 0.0, 0.0],
-                "model_name": "m",
-            },
-            {
-                "node_type": "fact",
-                "content": "dogs are loyal",
-                "embedding": [0.0, 1.0, 0.0],
-                "model_name": "m",
-            },
-        ])
+        memory.add_nodes(
+            [
+                {
+                    "node_type": "fact",
+                    "content": "cats are fluffy",
+                    "embedding": [1.0, 0.0, 0.0],
+                    "model_name": "m",
+                },
+                {
+                    "node_type": "fact",
+                    "content": "dogs are loyal",
+                    "embedding": [0.0, 1.0, 0.0],
+                    "model_name": "m",
+                },
+            ]
+        )
 
         result = memory.search(
             query_vector=[0.9, 0.1, 0.0],
@@ -190,9 +217,11 @@ class TestSearch:
         assert result["_meta"]["search_mode"] == "vector"
 
     def test_text_search(self, memory):
-        memory.add_nodes([
-            {"node_type": "fact", "content": "the quick brown fox"},
-        ])
+        memory.add_nodes(
+            [
+                {"node_type": "fact", "content": "the quick brown fox"},
+            ]
+        )
 
         result = memory.search(text_query="quick brown", mode="text")
         assert "results" in result
@@ -203,17 +232,23 @@ class TestTraversal:
     """Test graph traversal."""
 
     def test_traverse(self, memory):
-        nodes = memory.add_nodes([
-            {"node_type": "x", "content": "H"},
-            {"node_type": "x", "content": "I"},
-        ])
+        nodes = memory.add_nodes(
+            [
+                {"node_type": "x", "content": "H"},
+                {"node_type": "x", "content": "I"},
+            ]
+        )
         n1, n2 = nodes["node_ids"]
 
-        memory.add_edges([{
-            "source_node_id": n1,
-            "target_node_id": n2,
-            "edge_type": "NEXT",
-        }])
+        memory.add_edges(
+            [
+                {
+                    "source_node_id": n1,
+                    "target_node_id": n2,
+                    "edge_type": "NEXT",
+                }
+            ]
+        )
 
         result = memory.traverse(n1, depth=1)
         assert "nodes" in result
@@ -249,9 +284,11 @@ class TestMeta:
 
     def test_all_returns_have_meta(self, memory):
         """Every method should return a dict with _meta."""
-        result = memory.add_nodes([
-            {"node_type": "x", "content": "meta test"},
-        ])
+        result = memory.add_nodes(
+            [
+                {"node_type": "x", "content": "meta test"},
+            ]
+        )
         assert "_meta" in result
         assert "duration_ms" in result["_meta"]
 
