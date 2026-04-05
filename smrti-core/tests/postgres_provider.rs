@@ -18,40 +18,55 @@ use uuid::Uuid;
 // Shared container (started once, reused by all tests)
 // ---------------------------------------------------------------------------
 
-/// Shared DSN — container started once, provider created per test.
-static DSN: tokio::sync::OnceCell<String> = tokio::sync::OnceCell::const_new();
+/// Shared DSN + migration (run exactly once).
+static SETUP: tokio::sync::OnceCell<String> = tokio::sync::OnceCell::const_new();
 
-/// Ensure the container is running and return the DSN.
-async fn ensure_dsn() -> &'static str {
-    DSN.get_or_init(|| async {
-        let image = GenericImage::new("pgvector/pgvector", "pg17")
-            .with_wait_for(testcontainers::core::WaitFor::message_on_stderr(
-                "database system is ready to accept connections",
-            ))
-            .with_exposed_port(testcontainers::core::ContainerPort::Tcp(5432))
-            .with_env_var("POSTGRES_USER", "test")
-            .with_env_var("POSTGRES_PASSWORD", "test")
-            .with_env_var("POSTGRES_DB", "smrti_test");
+/// Ensure container is running AND migrations are applied. Returns DSN.
+async fn ensure_setup() -> &'static str {
+    SETUP
+        .get_or_init(|| async {
+            let image = GenericImage::new("pgvector/pgvector", "pg17")
+                .with_wait_for(testcontainers::core::WaitFor::message_on_stderr(
+                    "database system is ready to accept connections",
+                ))
+                .with_exposed_port(testcontainers::core::ContainerPort::Tcp(5432))
+                .with_env_var("POSTGRES_USER", "test")
+                .with_env_var("POSTGRES_PASSWORD", "test")
+                .with_env_var("POSTGRES_DB", "smrti_test");
 
-        let container = image
-            .start()
-            .await
-            .expect("Failed to start pgvector container");
+            let container = image
+                .start()
+                .await
+                .expect("Failed to start pgvector container");
 
-        let port = container.get_host_port_ipv4(5432).await.unwrap();
-        let dsn = format!("postgresql://test:test@127.0.0.1:{port}/smrti_test");
+            let port = container.get_host_port_ipv4(5432).await.unwrap();
+            let dsn = format!("postgresql://test:test@127.0.0.1:{port}/smrti_test");
 
-        // Leak so container lives for entire test process
-        std::mem::forget(container);
+            // Leak so container lives for entire test process
+            std::mem::forget(container);
 
-        dsn
-    })
-    .await
+            // Run migration exactly once — prevents concurrent CREATE EXTENSION races
+            let config: SmrtiConfig = serde_json::from_value(json!({
+                "dsn": &dsn,
+                "pool_min": 1,
+                "pool_max": 2,
+            }))
+            .unwrap();
+            let mut provider = PostgresProvider::new(config);
+            provider
+                .connect()
+                .await
+                .expect("Failed to connect for initial migration");
+            provider.close().await.ok();
+
+            dsn
+        })
+        .await
 }
 
-/// Create a fresh provider per test (shares container, fresh pool).
+/// Create a provider per test. Migration already done by ensure_setup().
 async fn setup_provider() -> PostgresProvider {
-    let dsn = ensure_dsn().await;
+    let dsn = ensure_setup().await;
     let config: SmrtiConfig = serde_json::from_value(json!({
         "dsn": dsn,
         "pool_min": 1,
@@ -60,6 +75,8 @@ async fn setup_provider() -> PostgresProvider {
     .unwrap();
 
     let mut provider = PostgresProvider::new(config);
+    // connect() calls migrate() which is idempotent (checks smrti_meta),
+    // but the expensive CREATE EXTENSION was already done by ensure_setup().
     provider.connect().await.expect("Failed to connect");
     provider
 }
