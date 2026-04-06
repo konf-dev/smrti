@@ -829,6 +829,15 @@ impl PostgresProvider {
             .ok_or_else(|| SmrtiError::Connection("Not connected. Call connect() first.".into()))
     }
 
+    /// Get a reference to the underlying connection pool.
+    /// Used by konf-runtime to share the pool for its event journal.
+    ///
+    /// # Panics
+    /// Panics if called before `connect()`.
+    pub fn pool_ref(&self) -> &PgPool {
+        self.pool.as_ref().expect("Not connected. Call connect() first.")
+    }
+
     // -----------------------------------------------------------------------
     // Private search methods
     // -----------------------------------------------------------------------

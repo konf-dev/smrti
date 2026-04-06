@@ -46,6 +46,12 @@ impl Memory {
         Ok(Self { config, provider })
     }
 
+    /// Get a reference to the underlying connection pool.
+    /// Used by konf-runtime to share the pool for its event journal.
+    pub fn pool(&self) -> &sqlx::PgPool {
+        self.provider.pool_ref()
+    }
+
     /// Close the database connection pool. Safe to call multiple times.
     pub async fn close(&mut self) -> Result<()> {
         self.provider.close().await
