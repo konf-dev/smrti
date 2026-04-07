@@ -1,0 +1,17 @@
+[package]
+name = "konf-tool-memory-smrti"
+version = "0.1.0"
+edition = "2021"
+description = "Postgres/pgvector memory backend via smrti for the Konf platform"
+license = "BUSL-1.1"
+repository = "https://github.com/konf-dev/smrti"
+
+[dependencies]
+# Memory trait from Konf monorepo
+konf-tool-memory = { git = "https://github.com/konf-dev/konf.git" }
+# smrti-core is a workspace sibling
+smrti-core = { path = "../smrti-core" }
+async-trait = "0.1"
+serde_json = "1"
+anyhow = "1"
+tracing = "0.1"

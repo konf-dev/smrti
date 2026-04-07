@@ -280,7 +280,7 @@ impl Memory {
 
         let eid = self
             .provider
-            .apply_event(&Event::new("", EventType::NodeUpdated, payload))
+            .apply_event(&Event::new(&self.config.default_namespace, EventType::NodeUpdated, payload))
             .await?;
 
         Ok(json!({
@@ -302,7 +302,7 @@ impl Memory {
         let eid = self
             .provider
             .apply_event(&Event::new(
-                "",
+                &self.config.default_namespace,
                 EventType::NodeRetracted,
                 json!({"id": node_id}),
             ))
@@ -327,7 +327,7 @@ impl Memory {
         let eid = self
             .provider
             .apply_event(&Event::new(
-                "",
+                &self.config.default_namespace,
                 EventType::EdgeRetracted,
                 json!({"id": edge_id}),
             ))
@@ -354,7 +354,7 @@ impl Memory {
         let eid = self
             .provider
             .apply_event(&Event::new(
-                "",
+                &self.config.default_namespace,
                 EventType::NodesMerged,
                 json!({
                     "kept_id": keep_id,
