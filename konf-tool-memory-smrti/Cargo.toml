@@ -8,7 +8,7 @@ repository = "https://github.com/konf-dev/smrti"
 
 [dependencies]
 # Memory trait from Konf monorepo
-konf-tool-memory = { git = "https://github.com/konf-dev/konf.git" }
+konf-tool-memory = { git = "ssh://git@github.com/konf-dev/konf.git" }
 # smrti-core is a workspace sibling
 smrti-core = { path = "../smrti-core" }
 async-trait = "0.1"
