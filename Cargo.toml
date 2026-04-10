@@ -4,3 +4,7 @@ members = [
     "smrti-core",
     "konf-tool-memory-smrti",
 ]
+
+[patch."ssh://git@github.com/konf-dev/konf.git"]
+konf-tool-memory = { path = "../konf/crates/konf-tool-memory" }
+konflux-core = { path = "../konf/crates/konflux-core" }
