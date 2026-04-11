@@ -196,7 +196,7 @@ Search accepts a list of namespaces: `search(namespaces=["user:123", "global"])`
 
 Edges support optional `valid_from` and `valid_to` fields (timestamps). `valid_to` is nullable (meaning "currently true"). Queries filter by validity: `WHERE valid_from <= :now AND (valid_to IS NULL OR valid_to >= :now)`.
 
-**Why:** Temporal reasoning is critical for agent memory. "Bert worked at Acme from 2020 to 2024" is one edge with a validity interval, not create + retract events. Small schema addition, big payoff.
+**Why:** Temporal reasoning is critical for agent memory. "Alice worked at Acme from 2020 to 2024" is one edge with a validity interval, not create + retract events. Small schema addition, big payoff.
 
 ## D28. Namespace isolation is strict, no built-in hierarchies
 
